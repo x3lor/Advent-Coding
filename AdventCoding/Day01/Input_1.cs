@@ -1,4 +1,4 @@
-public static class Input_1_1 {
+public static class Input_1 {
     public static string input = 
 @"2000
 12013

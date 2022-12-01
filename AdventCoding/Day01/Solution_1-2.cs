@@ -4,7 +4,7 @@ public class Solution_1_2 : ISolution
     {
         Console.WriteLine("Starting");
 
-        var input = Input_1_1.input.Split('\n');
+        var input = Input_1.input.Split('\n');
 
         var list = new List<int>(input.Length/4);
         var sum = 0;
