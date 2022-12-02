@@ -1,4 +1,4 @@
-﻿ISolution solution = new Solution_1_2();
+﻿ISolution solution = new Solution_2_2();
 solution.run();
 
 //Console.ReadLine();
