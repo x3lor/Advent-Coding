@@ -1,10 +1,10 @@
-public class Solution_4_1 : ISolution
+public class Solution_4_2 : ISolution
 {
     public void run()
     {
         Console.WriteLine("Starting");
 
-        // Beispiel: 12-45,46-95
+        // 12-45,46-95
         var input = Input_4.input.Split('\n');
 
         var sum = 0;
@@ -17,9 +17,9 @@ public class Solution_4_1 : ISolution
             var rangeLeft  = new NumberRange(parts[0]);
             var rangeRight = new NumberRange(parts[1]);
           
-            if (rangeLeft.IsWithin(rangeRight) || rangeRight.IsWithin(rangeLeft)) {
+            if (rangeLeft.DoesOverlap(rangeRight) || rangeRight.DoesOverlap(rangeLeft)) {
                 sum++;
-            }
+            }   
         }
 
         Console.WriteLine($"done! Sum: {sum}");
@@ -35,8 +35,8 @@ public class Solution_4_1 : ISolution
             end = int.Parse(parts[1]);
         }
 
-        public bool IsWithin (NumberRange r) {
-            return r.start >= start && r.end <= end;
+        public bool DoesOverlap (NumberRange r) {
+            return (r.start >= start && r.start <= end) || (r.end >= start && r.end <= end);
         }
     }
 }
