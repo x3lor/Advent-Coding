@@ -1,6 +1,6 @@
 using System.Text;
 
-public class Solution_5_1 : ISolution
+public class Solution_5_2 : ISolution
 {
     public void run()
     {
@@ -23,7 +23,6 @@ public class Solution_5_1 : ISolution
             stacks.ApplyMove(quantity, from, to);
         }
 
-       
         stacks.PrintState();
         stacks.PrintTopOfStacks();       
     }    
@@ -38,7 +37,7 @@ public class Solution_5_1 : ISolution
         public void ApplyMove(int quantity, int from, int to) {
             var toMove = stacks[from].Substring(stacks[from].Length-quantity, quantity);
             stacks[from] = stacks[from].Substring(0, stacks[from].Length-quantity);
-            stacks[to] = stacks[to]+Reverse(toMove);
+            stacks[to] = stacks[to]+toMove;
         }
 
         public void PrintState() {
@@ -52,13 +51,6 @@ public class Solution_5_1 : ISolution
             Console.WriteLine();
         }
 
-        public static string Reverse( string s )
-        {
-            char[] charArray = s.ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
-        }
-
         public void PrintTopOfStacks() {
 
             var sb = new StringBuilder();
@@ -68,6 +60,6 @@ public class Solution_5_1 : ISolution
             }
 
             Console.WriteLine($"Top of Stacks: {sb.ToString()}\n");
-        } 
+        }
     }
 }
