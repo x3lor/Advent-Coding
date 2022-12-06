@@ -1,4 +1,4 @@
-public class Solution_6_1 : ISolution
+public class Solution_6_2 : ISolution
 {
     public void run()
     {
@@ -8,10 +8,10 @@ public class Solution_6_1 : ISolution
 
         for(int i=0; i<input.Length; i++) {
             
-            var currentsegment = input.Substring(i, 4);
+            var currentsegment = input.Substring(i, 14);
             if (OnlyUniqueCharaters (currentsegment))
             {
-                Console.WriteLine($"Found at: i={i} .. result should be: {i+4}");
+                Console.WriteLine($"Found at: i={i} .. result should be: {i+14}");
                 break;
             }
         }
@@ -21,6 +21,6 @@ public class Solution_6_1 : ISolution
 
     private static bool OnlyUniqueCharaters(string s) {
         var charArray = s.ToCharArray().ToHashSet<char>();
-        return charArray.Count == 4;
+        return charArray.Count == 14;
     }
 }
