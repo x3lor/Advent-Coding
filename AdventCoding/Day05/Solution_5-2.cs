@@ -7,14 +7,10 @@ public class Solution_5_2 : ISolution
         Console.WriteLine("Starting");
         var stacks = new Stacks(Input_5.start);
 
-        var moves = Input_5.moves.Split('\n');
-
-        for(int i=0; i<moves.Length; i++) {
+        foreach(var move in Input_5.moves.Split('\n')) {
         
             // Example: move 12 from 3 to 5
-            var currentLine = moves[i];
-
-            var parts = currentLine.Split(' ');
+            var parts = move.Split(' ');
 
             var quantity = int.Parse(parts[1]);
             var from     = int.Parse(parts[3]) - 1;
@@ -23,7 +19,7 @@ public class Solution_5_2 : ISolution
             stacks.ApplyMove(quantity, from, to);
         }
 
-        stacks.PrintState();
+        //stacks.PrintState();
         stacks.PrintTopOfStacks();       
     }    
 
@@ -51,15 +47,12 @@ public class Solution_5_2 : ISolution
             Console.WriteLine();
         }
 
-        public void PrintTopOfStacks() {
-
-            var sb = new StringBuilder();
-
-            foreach (var s in stacks) {
-                sb.Append(s.Substring(s.Length-1, 1));
-            }
-
-            Console.WriteLine($"Top of Stacks: {sb.ToString()}\n");
+        private static string LastCharacterOf(string s) {
+            return s.Substring(s.Length-1, 1);
         }
+
+        public void PrintTopOfStacks() {
+            Console.WriteLine($"Top of Stacks: {string.Join("", stacks.Select(s => LastCharacterOf(s)))}");
+        } 
     }
 }

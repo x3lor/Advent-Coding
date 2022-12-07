@@ -5,16 +5,13 @@ public class Solution_5_1 : ISolution
     public void run()
     {
         Console.WriteLine("Starting");
+
         var stacks = new Stacks(Input_5.start);
 
-        var moves = Input_5.moves.Split('\n');
-
-        for(int i=0; i<moves.Length; i++) {
+        foreach(var move in Input_5.moves.Split('\n')) {
         
             // Example: move 12 from 3 to 5
-            var currentLine = moves[i];
-
-            var parts = currentLine.Split(' ');
+            var parts = move.Split(' ');
 
             var quantity = int.Parse(parts[1]);
             var from     = int.Parse(parts[3]) - 1;
@@ -23,8 +20,7 @@ public class Solution_5_1 : ISolution
             stacks.ApplyMove(quantity, from, to);
         }
 
-       
-        stacks.PrintState();
+        //stacks.PrintState();
         stacks.PrintTopOfStacks();       
     }    
 
@@ -36,9 +32,11 @@ public class Solution_5_1 : ISolution
         }
 
         public void ApplyMove(int quantity, int from, int to) {
+
             var toMove = stacks[from].Substring(stacks[from].Length-quantity, quantity);
+
             stacks[from] = stacks[from].Substring(0, stacks[from].Length-quantity);
-            stacks[to] = stacks[to]+Reverse(toMove);
+            stacks[to]   = stacks[to]+ReverseString(toMove);
         }
 
         public void PrintState() {
@@ -52,22 +50,19 @@ public class Solution_5_1 : ISolution
             Console.WriteLine();
         }
 
-        public static string Reverse( string s )
+        public static string ReverseString(string s)
         {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
         }
 
+        private static string LastCharacterOf(string s) {
+            return s.Substring(s.Length-1, 1);
+        }
+
         public void PrintTopOfStacks() {
-
-            var sb = new StringBuilder();
-
-            foreach (var s in stacks) {
-                sb.Append(s.Substring(s.Length-1, 1));
-            }
-
-            Console.WriteLine($"Top of Stacks: {sb.ToString()}\n");
+            Console.WriteLine($"Top of Stacks: {string.Join("", stacks.Select(s => LastCharacterOf(s)))}");
         } 
     }
 }

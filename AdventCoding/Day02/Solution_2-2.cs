@@ -2,38 +2,21 @@ public class Solution_2_2 : ISolution
 {
     public void run()
     {
-        Console.WriteLine("Starting");
-
-        var input = Input_2.input.Split('\n');
+        Console.Write("Starting ... ");
 
         var sum = 0;
-
-        for(int i=0; i<input.Length; i++) {
+        foreach(var line in Input_2.input.Split('\n')) {
             
-            var currentline = input[i];
-
-            // +1 Rock
-            // +2 Paper
-            // +3 Scissors
-
-            // +0 Loss
-            // +3 Draw
-            // +6 Win
-
-            // X -> need LOSS
-            // Y -> need DRAW
-            // Z -> need WIN
-
-            switch (currentline) {
-                case "A X": sum += 3; break; // Rock + Loss     -> Loss + Scissors 
-                case "A Y": sum += 4; break; // Rock + Draw     -> Draw + Rock
-                case "A Z": sum += 8; break; // Rock + Win      -> Win  + Paper
-                case "B X": sum += 1; break; // Paper + Loss    -> Loss + Rock
-                case "B Y": sum += 5; break; // Paper + Draw    -> Draw + Paper
-                case "B Z": sum += 9; break; // Paper + Win     -> Win  + Scissors
-                case "C X": sum += 2; break; // Scissors + Loss -> Loss + Paper
-                case "C Y": sum += 6; break; // Scissors + Draw -> Draw + Scissors
-                case "C Z": sum += 7; break; // Scissors + Win  -> Win  + Rock
+            switch (line) {
+                case "A X": sum += 3; break; // -> Need Loss (0) + Scissors (3)
+                case "A Y": sum += 4; break; // -> Need Draw (3) + Rock (1)
+                case "A Z": sum += 8; break; // -> Need Win  (6) + Paper (2)
+                case "B X": sum += 1; break; // -> Need Loss (0) + Rock (1)
+                case "B Y": sum += 5; break; // -> Need Draw (3) + Paper (2)
+                case "B Z": sum += 9; break; // -> Need Win  (6) + Scissors (3)
+                case "C X": sum += 2; break; // -> Need Loss (0) + Paper (2)
+                case "C Y": sum += 6; break; // -> Need Draw (3) + Scissors (3)
+                case "C Z": sum += 7; break; // -> Need Win  (6) + Rock (1)
             }
         }
 

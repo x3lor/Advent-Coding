@@ -2,17 +2,14 @@ public class Solution_4_1 : ISolution
 {
     public void run()
     {
-        Console.WriteLine("Starting");
-
-        // Beispiel: 12-45,46-95
-        var input = Input_4.input.Split('\n');
+        Console.Write("Starting ... ");
 
         var sum = 0;
 
-        for(int i=0; i<input.Length; i++) {
+        foreach(var line in Input_4.input.Split('\n')) {
             
-            var currentLine = input[i];
-            var parts = currentLine.Split(',');
+            // Example: 12-45,46-95
+            var parts = line.Split(',');
 
             var rangeLeft  = new NumberRange(parts[0]);
             var rangeRight = new NumberRange(parts[1]);
@@ -32,7 +29,7 @@ public class Solution_4_1 : ISolution
         public NumberRange(string s) {
             var parts = s.Split('-');
             start = int.Parse(parts[0]);
-            end = int.Parse(parts[1]);
+            end   = int.Parse(parts[1]);
         }
 
         public bool IsWithin (NumberRange r) {

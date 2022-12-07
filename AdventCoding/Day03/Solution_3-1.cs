@@ -2,28 +2,19 @@ public class Solution_3_1 : ISolution
 {
     public void run()
     {
-        Console.WriteLine("Starting");
-
-        var input = Input_3.input.Split('\n');
+        Console.Write("Starting ... ");
 
         var sum = 0;
 
-        for(int i=0; i<input.Length; i++) {
-            
-          var currentline = input[i];
-          var (s1, s2) = SplitStringInHalf(currentline);
-          var c = GetFirstCommonCharInTwoStrings(s1, s2);
-          var number = CharToNumber(c);
-
-          sum += number;
+        foreach(var line in Input_3.input.Split('\n')) {
+                      
+            var halfLength = line.Length/2;
+            var c = GetFirstCommonCharInTwoStrings(line.Substring(0,          halfLength), 
+                                                   line.Substring(halfLength, halfLength));
+            sum += CharToNumber(c);
         }
 
         Console.WriteLine($"done! Sum: {sum}");
-    }
-
-    private (string, string) SplitStringInHalf(string s) {
-        var halfLength = s.Length/2;
-        return (s.Substring(0, halfLength), s.Substring(halfLength, halfLength));
     }
 
     private char GetFirstCommonCharInTwoStrings(string s1, string s2) {

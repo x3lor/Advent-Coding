@@ -2,18 +2,15 @@ public class Solution_3_2 : ISolution
 {
     public void run()
     {
-        Console.WriteLine("Starting");
+        Console.Write("Starting ... ");
 
         var input = Input_3.input.Split('\n');
-
         var sum = 0;
 
         for(int i=0; i<input.Length; i += 3) {
                 
-          var c = GetFirstCommonCharInThreeStrings(input[i], input[i+1], input[i+2]);
-          var number = CharToNumber(c);
-
-          sum += number;
+            var c = GetFirstCommonCharInThreeStrings(input[i], input[i+1], input[i+2]);
+            sum += CharToNumber(c);
         }
 
         Console.WriteLine($"done! Sum: {sum}");
