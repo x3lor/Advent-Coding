@@ -2,7 +2,7 @@ public class Solution_8_1 : ISolution
 {
     public void run()
     {
-        Console.Write("Starting");
+        Console.Write("Starting ... ");
 
         var input = Input_8.input.Split('\n');
         var sum = 0;

@@ -73,7 +73,7 @@ public class Solution_7_1 : ISolution
         }
 
         public void CalculateSize() {
-            Size = subfolders.Sum(s => {s.CalculateSize(); return s.Size; }) +
+            Size = subfolders.Sum(s => { s.CalculateSize(); return s.Size; }) +
                    files.Sum(f => f.Value);        
         }
 
