@@ -64,20 +64,15 @@ public class Solution_8_1 : ISolution
             }
         }
 
-        var sum = 0;
-        for (int r=0; r<rows; r++) {
-            for (int c=0; c<columns; c++) {
-                if (forest[r,c].Visible) {
-                    sum++;
-                }
-            }
-        }
+        var sum = forest.Cast<Tree>()
+                        .Select(t => t.Visible ? 1 : 0)
+                        .Sum();
 
         Console.WriteLine($"done! Sum: {sum}");
     }   
 
     private class Tree {
-        public int Height { get; set; }
+        public int  Height  { get; set; }
         public bool Visible { get; set; } 
     } 
 }
