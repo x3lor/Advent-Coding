@@ -1,5 +1,7 @@
 ﻿ISolution solution1 = new Solution_8_1();
 solution1.run();
+ISolution solution2 = new Solution_8_2();
+solution2.run();
 
 //visualization day 7
 //var visualizer = new VisualizerDay07();
