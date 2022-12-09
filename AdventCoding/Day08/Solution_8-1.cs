@@ -20,7 +20,7 @@ public class Solution_8_1 : ISolution
             }
         }
 
-        // from left
+        // from left to right
         for (int r=1; r<rows; r++) {
             var growLeft = forest[r,0].Height;
             for (int c=1; c<columns; c++) {
@@ -31,7 +31,7 @@ public class Solution_8_1 : ISolution
             }
         }
 
-        // fromright
+        // from right to left
         for (int r=1; r<rows; r++) {
             var growright = forest[r,columns-1].Height;
             for (int c=columns-2; c>0; c--) {
@@ -42,7 +42,7 @@ public class Solution_8_1 : ISolution
             }
         }
 
-        // from top
+        // from top to bottom
         for (int c=1; c<columns; c++) {
             var growTop = forest[0,c].Height;
             for (int r=1; r<rows; r++) {
@@ -53,7 +53,7 @@ public class Solution_8_1 : ISolution
             }
         }
 
-        // from bottom
+        // from bottom to top
         for (int c=1; c<columns; c++) {
             var growBottom = forest[rows-1,c].Height;
             for (int r=rows-2; r>0; r--) {

@@ -1,4 +1,4 @@
-public class Solution_9_1 : ISolution
+public class Solution_9_2 : ISolution
 {
     public void run()
     {
@@ -6,8 +6,10 @@ public class Solution_9_1 : ISolution
 
         var allTailPositions = new List<Position>();
 
-        var pHead = new Position();
-        var pTail = new Position();
+        var rope = new List<Position>();
+        for (var j=0; j<10; j++) {
+            rope.Add(new Position());
+        }
 
         foreach(var line in Input_9.input.Split('\n')) {
             
@@ -17,16 +19,18 @@ public class Solution_9_1 : ISolution
             for (int i=0; i<moves; i++) {
 
                 switch(parts[0]) {
-                    case "L": { pHead.X--; break; }
-                    case "U": { pHead.Y--; break; }
-                    case "D": { pHead.Y++; break; }
-                    case "R": { pHead.X++; break; }
+                    case "L": { rope[0].X--; break; }
+                    case "U": { rope[0].Y--; break; }
+                    case "D": { rope[0].Y++; break; }
+                    case "R": { rope[0].X++; break; }
                 }
 
-                AdjustTail(pHead, pTail);
+                for (var j=0; j<9; j++) {
+                    AdjustTail(rope[j], rope[j+1]);
+                }
 
-                if (!allTailPositions.Any(p => p.X == pTail.X && p.Y == pTail.Y))
-                    allTailPositions.Add(pTail.Copy());
+                if (!allTailPositions.Any(p => p.X == rope[9].X && p.Y == rope[9].Y))
+                    allTailPositions.Add(rope[9].Copy());
             }
         }
 
@@ -64,5 +68,5 @@ public class Solution_9_1 : ISolution
 
         public int X { get; set; } = 0;
         public int Y { get; set; } = 0; 
-    }    
+    }
 }
