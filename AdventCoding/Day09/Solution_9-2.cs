@@ -49,10 +49,8 @@ public class Solution_9_2 : ISolution
            if (head.Y < tail.Y) { tail.Y--; return; }
            if (head.Y > tail.Y) { tail.Y++; return; }
         } else {
-            if (head.X < tail.X && head.Y < tail.Y) { tail.X--; tail.Y--; return; }
-            if (head.X > tail.X && head.Y < tail.Y) { tail.X++; tail.Y--; return; }
-            if (head.X < tail.X && head.Y > tail.Y) { tail.X--; tail.Y++; return; }
-            if (head.X > tail.X && head.Y > tail.Y) { tail.X++; tail.Y++; return; }
+            if (head.X < tail.X ) { tail.X--; } else { tail.X++; }
+            if (head.Y < tail.Y ) { tail.Y--; } else { tail.Y++; }
         }
     }
 

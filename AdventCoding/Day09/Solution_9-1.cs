@@ -39,20 +39,18 @@ public class Solution_9_1 : ISolution
             return;
         }
 
-        if (AreHeadAndTailInTheSameColumn(head, tail)) {
+        if (AreHeadAndTailInTheSameColumnOrRow(head, tail)) {
            if (head.X < tail.X) { tail.X--; return; }
            if (head.X > tail.X) { tail.X++; return; }
            if (head.Y < tail.Y) { tail.Y--; return; }
            if (head.Y > tail.Y) { tail.Y++; return; }
         } else {
-            if (head.X < tail.X && head.Y < tail.Y) { tail.X--; tail.Y--; return; }
-            if (head.X > tail.X && head.Y < tail.Y) { tail.X++; tail.Y--; return; }
-            if (head.X < tail.X && head.Y > tail.Y) { tail.X--; tail.Y++; return; }
-            if (head.X > tail.X && head.Y > tail.Y) { tail.X++; tail.Y++; return; }
+            if (head.X < tail.X ) { tail.X--; } else { tail.X++; }
+            if (head.Y < tail.Y ) { tail.Y--; } else { tail.Y++; }
         }
     }
 
-    private bool AreHeadAndTailInTheSameColumn(Position head, Position tail) {
+    private bool AreHeadAndTailInTheSameColumnOrRow(Position head, Position tail) {
         return (head.X == tail.X) || (head.Y == tail.Y);
     }
 
