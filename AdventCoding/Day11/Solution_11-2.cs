@@ -55,14 +55,8 @@ public class Solution_11_2 : ISolution
                 long factor1 = level;
                 long factor2 = updateFactor=="old" ? level : int.Parse(updateFactor);
 
-                var result = updateOperator=="+" ? factor1+factor2 : factor1*factor2;
                 var breakFactor = 5 * 2 * 19 * 7 * 17 * 13 * 3 * 11;
-
-                if (result>breakFactor) {
-                    result = result%breakFactor;
-                }
-
-                return result;
+                return (updateOperator=="+" ? factor1+factor2 : factor1*factor2) % breakFactor;
             };
 
             var testFactor = int.Parse(description[2].Substring(21));
