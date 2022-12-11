@@ -4,26 +4,21 @@ public class Solution_11_1 : ISolution
     {
         Console.Write("Starting ... ");
 
-        var lines = Input_11.input.Split('\n').ToList();
-       
         var monkeys = new List<Monkey>();
 
-        for (int i=0; i<8; i++) {
-            monkeys.Add(new Monkey(lines.GetRange(i*7, 6)));
+        var lines = Input_11.input.Split('\n').ToList();
+        for (int i=0; i<(lines.Count+1)/7; i++) {
+            monkeys.Add(new Monkey(lines.GetRange(i*7+1, 5)));
         }
 
         for (int round=0; round<20; round++) {
-            for (int monkeyId=0; monkeyId<8; monkeyId++) {
-                var activeMonkey = monkeys[monkeyId];
-
+            foreach (var activeMonkey in monkeys) {
                 while(activeMonkey.HasMoreItems()) {
-                    var item = activeMonkey.GetItem();
-
                     activeMonkey.ActionCounter++;
-                    var updatedWorryLevel = activeMonkey.Operation(item)/3;
-
-                    var nextMonkey = activeMonkey.GetNextMonkey(updatedWorryLevel);
-                    monkeys[nextMonkey].TakeItem(updatedWorryLevel);
+                    var item = activeMonkey.GetNextItem();
+                    var updatedWorryLevel = activeMonkey.UpdateWorryLevel(item);
+                    var monkeyIdToPassTheItem = activeMonkey.GetNextMonkey(updatedWorryLevel);
+                    monkeys[monkeyIdToPassTheItem].TakeItemFromOtherMonkey(updatedWorryLevel);
                 }
             }
         }
@@ -37,61 +32,52 @@ public class Solution_11_1 : ISolution
     }
 
     public class Monkey {
+
+        private List<int> items;
+        private Func<int, int> operation;
+        private Func<int, bool> test;
+        private int targetTrue;
+        private int targetFalse;
+
         public Monkey(IList<string> description) {
-            Id = int.Parse(description[0].Substring(7, 1));
-            Items = description[1].Substring(18)
+            
+            items = description[0].Substring(18)
                                   .Split(',')
                                   .Select(s => int.Parse(s.Trim()))
                                   .ToList();
-            var opDescription = description[2].Substring(23,1);
-            var opFactor      = description[2].Substring(25);
-            Operation = level => {
+
+            var updateOperator = description[1].Substring(23,1);
+            var updateFactor   = description[1].Substring(25);
+            operation = level => {
                 
                 int factor1 = level;
-                int factor2 = opFactor=="old" ? level : int.Parse(opFactor);
+                int factor2 = updateFactor=="old" ? level : int.Parse(updateFactor);
 
-                return opDescription=="+" ? factor1+factor2 : factor1*factor2;
+                return updateOperator=="+" ? factor1+factor2 : factor1*factor2;
             };
-            var testFactor = int.Parse(description[3].Substring(21));
-            Test = input => {
+
+            var testFactor = int.Parse(description[2].Substring(21));
+            test = input => {
                 return input % testFactor == 0;
             };
-            TargetTrue  = int.Parse(description[4].Substring(29));
-            TargetFalse = int.Parse(description[5].Substring(30));
+            targetTrue  = int.Parse(description[3].Substring(29));
+            targetFalse = int.Parse(description[4].Substring(30));
         }
-
-
-        public int Id { get; }
-        public List<int> Items { get; }
-        public Func<int, int> Operation { get; }
-        public Func<int, bool> Test { get; }
-        public int TargetTrue { get; }
-        public int TargetFalse { get; }
 
         public int ActionCounter { get; set; } = 0;
 
-        public int GetItem() {
-            if (!Items.Any())
-                return -1;
-
-            var item = Items.First();
-            Items.Remove(item);
+        public int GetNextItem() {
+            var item = items.First();
+            items.Remove(item);
             return item;
         }
 
-        public int GetNextMonkey(int item) {
-            if (Test(item))
-                return TargetTrue;
-            else 
-                return TargetFalse;
+        public void TakeItemFromOtherMonkey(int item) {
+            items.Add(item);
         }
 
-        public bool HasMoreItems() {
-            return Items.Any();
-        }
-
-        public void TakeItem(int item) {
-            Items.Add(item);
-        }
+        public bool HasMoreItems() => items.Any();
+        public int UpdateWorryLevel(int item) => operation(item)/3;
+        public int GetNextMonkey(int item) => test(item) ? targetTrue : targetFalse;
     }    
 }
