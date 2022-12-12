@@ -6,66 +6,53 @@ public class Solution_12_1 : ISolution
 
         var input = Input_12.input.Split('\n');
 
-        var rows    = input.Length;
-        var columns = input[0].Length;
+        var rows_x    = input.Length;
+        var columns_y = input[0].Length;
 
-        var map = new Position[rows, columns];
-
-        for (int r=0; r<rows; r++) {
-            for (int c=0; c<columns; c++) {
-                var ch = input[r].Substring(c, 1).ElementAt(0);
-                map[r, c] = new Position {
-                    Height = CharToHeight(ch),
-                    IsStart = ch == 'S',
-                    IsGoal = ch == 'E'
-                };
+        // Initializing the 2D-Array
+        var map = new Position[rows_x, columns_y]; 
+        for (int x=0; x<rows_x; x++) {
+            for (int y=0; y<columns_y; y++) {
+                map[x, y] = new Position(input[x].Substring(y, 1).ElementAt(0));
             }
         }
 
-        for (int r=0; r<rows; r++) {
-            for (int c=0; c<columns; c++) {
-                map[r, c].Left   = GetLeft  (map, r, c);
-                map[r, c].Top    = GetTop   (map, r, c);
-                map[r, c].Bottom = GetBottom(map, r, c, rows);
-                map[r, c].Right  = GetRight (map, r, c, columns);
+        // Creating the Graph with all possible connections
+        for (int x=0; x<rows_x; x++) {
+            for (int y=0; y<columns_y; y++) {
+                map[x, y].Left   = ((x>0)           && map[x-1, y].Height-map[x, y].Height < 2) ? map[x-1, y] : null;
+                map[x, y].Top    = ((y>0)           && map[x, y-1].Height-map[x, y].Height < 2) ? map[x, y-1] : null;
+                map[x, y].Bottom = ((x<rows_x-1)    && map[x+1, y].Height-map[x, y].Height < 2) ? map[x+1, y] : null;
+                map[x, y].Right  = ((y<columns_y-1) && map[x, y+1].Height-map[x, y].Height < 2) ? map[x, y+1] : null;;
             }
         }
 
-        var start = map.Cast<Position>().First(p => p.IsStart);
+        // Find the start and begin with the search for the best way to the goal
+        var start = map.Cast<Position>()
+                       .First(p => p.IsStart);
+
         start.StepsToGetHere = 0;
         start.SearchAndSet();
 
+        var steps =  map.Cast<Position>()
+                        .First(p => p.IsGoal)
+                        .StepsToGetHere;
 
-        var steps =  map.Cast<Position>().First(p => p.IsGoal).StepsToGetHere;
-
-        Console.WriteLine($"done! Sum: {steps}");
+        Console.WriteLine($"done! Steps: {steps}");
     }    
-
-    private Position? GetLeft  (Position [,] map, int x, int y)                { return ((x>0)           && map[x-1, y].Height-map[x, y].Height < 2) ? map[x-1, y] : null; }
-    private Position? GetTop   (Position [,] map, int x, int y)                { return ((y>0)           && map[x, y-1].Height-map[x, y].Height < 2) ? map[x, y-1] : null; }
-    private Position? GetBottom(Position [,] map, int x, int y, int mapHeight) { return ((x<mapHeight-1) && map[x+1, y].Height-map[x, y].Height < 2) ? map[x+1, y] : null; }
-    private Position? GetRight (Position [,] map, int x, int y, int mapWidth ) { return ((y<mapWidth-1)  && map[x, y+1].Height-map[x, y].Height < 2) ? map[x, y+1] : null; }
-
-    private int CharToHeight(char c) {
-        if (c >= 'a' && c <= 'z')
-            return ((int)c)-((int)'a');
-
-        if (c == 'S')
-            return CharToHeight('a');
-        
-        if (c == 'E') {
-            return CharToHeight('z');
-        }
-
-        throw new ArgumentException("sollte nicht passieren");
-    }
 
     public class Position {
 
-        public bool IsStart { get; set; }
-        public bool IsGoal { get; set; }
+        public Position(char c) {
+            Height  = CharToHeight(c);
+            IsStart = c == 'S';
+            IsGoal  = c == 'E';
+        }
 
-        public int Height { get; set; }
+        public bool IsStart { get; }
+        public bool IsGoal  { get; }
+
+        public int Height { get; }
 
         public Position? Left   { get; set; }
         public Position? Top    { get; set; }
@@ -74,32 +61,23 @@ public class Solution_12_1 : ISolution
 
         public int StepsToGetHere { get; set; } = -1;
 
+        private int CharToHeight(char c) =>
+        c switch
+        {
+            'S' => CharToHeight('a'),
+            'E' => CharToHeight('z'),
+            (>= 'a') and (<= 'z') => ((int)c)-((int)'a'),
+            _ => throw new ArgumentException("sollte nicht passieren")
+        };
+
         public void SearchAndSet() {
-            if (Left != null) {
-                if ((Left.StepsToGetHere == -1) || (Left.StepsToGetHere > StepsToGetHere+1)) {
-                    Left.StepsToGetHere = StepsToGetHere+1;
-                    Left.SearchAndSet();
-                } 
-            }
+            var adjacentNodes = new List<Position?> { Left, Right, Top, Bottom };
 
-            if (Top != null) {
-                if ((Top.StepsToGetHere == -1) || (Top.StepsToGetHere > StepsToGetHere+1)) {
-                    Top.StepsToGetHere = StepsToGetHere+1;
-                    Top.SearchAndSet();
-                } 
-            }
+            foreach(var node in adjacentNodes.Where(n => n != null).Cast<Position>()) {
 
-            if (Right != null) {
-                if ((Right.StepsToGetHere == -1) || (Right.StepsToGetHere > StepsToGetHere+1)) {
-                    Right.StepsToGetHere = StepsToGetHere+1;
-                    Right.SearchAndSet();
-                } 
-            }
-
-            if (Bottom != null) {
-                if ((Bottom.StepsToGetHere == -1) || (Bottom.StepsToGetHere > StepsToGetHere+1)) {
-                    Bottom.StepsToGetHere = StepsToGetHere+1;
-                    Bottom.SearchAndSet();
+                if ((node.StepsToGetHere == -1) || (node.StepsToGetHere > StepsToGetHere+1)) {
+                    node.StepsToGetHere = StepsToGetHere+1;
+                    node.SearchAndSet();
                 } 
             }
         }
