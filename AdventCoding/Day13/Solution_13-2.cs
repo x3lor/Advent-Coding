@@ -1,25 +1,38 @@
-public class Solution_13_1 : ISolution
+public class Solution_13_2 : ISolution
 {
     public void run()
     {
         Console.Write("Starting ... ");
 
-        var sum = 0;
+        var the2 = new Element("[[2]]");
+        var the6 = new Element("[[6]]");
 
-        var input = Input_13.input.Split('\n');
-    
-        for(int i = 0; i<input.Length; i+=3) {
-            
-            var left  = new Element(input[i]);
-            var right = new Element(input[i+1]);
+        var listOfAll = Input_13.input
+                                .Split('\n')
+                                .Where(i => !string.IsNullOrEmpty(i))
+                                .Select(i => new Element(i))
+                                .Append(the2)
+                                .Append(the6)
+                                .OrderByDescending(e => e, new Comparer())
+                                .ToList();
 
-            if (CompareLists(left, right) > 0) {
-                sum += (i/3)+1;
-            }
+        var indexOf2 = listOfAll.IndexOf(the2)+1;
+        var indexOf6 = listOfAll.IndexOf(the6)+1;
+
+        Console.WriteLine($"done! Sum: {indexOf2 * indexOf6}");
+        
+    }
+
+    private class Comparer : IComparer<Element>
+    {
+        public int Compare(Element? x, Element? y)
+        {
+            if (x == null || y == null)
+                return -1;
+
+            return CompareLists(x, y);
         }
-
-        Console.WriteLine($"done! Sum: {sum}");
-    }    
+    }
 
     // +1: right order // left side smaller value // left side fewer items
     // -1: wrong order
