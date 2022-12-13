@@ -19,7 +19,7 @@ public class Solution_13_2 : ISolution
         var indexOf2 = listOfAll.IndexOf(the2)+1;
         var indexOf6 = listOfAll.IndexOf(the6)+1;
 
-        Console.WriteLine($"done! Sum: {indexOf2 * indexOf6}");
+        Console.WriteLine($"done! Res: {indexOf2 * indexOf6}");
         
     }
 
