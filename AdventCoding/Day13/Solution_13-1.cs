@@ -1,5 +1,3 @@
-using System.Text;
-
 public class Solution_13_1 : ISolution
 {
     public void run()
@@ -10,7 +8,7 @@ public class Solution_13_1 : ISolution
         var numCorrect = 0;
         var numWrong = 0;
 
-        var input = Input_13.input.Split('\n');
+        var input = Input_13.inputExample2.Split('\n');
     
         for(int i = 0; i<input.Length; i+=3) {
             
@@ -26,8 +24,8 @@ public class Solution_13_1 : ISolution
         }
 
         Console.WriteLine($"done! Sum: {sum}");
-        Console.WriteLine($"korrekt: {numCorrect}");
-        Console.WriteLine($"falsch:  {numWrong}");
+        Console.WriteLine($"correct: {numCorrect}");
+        Console.WriteLine($"wrong:   {numWrong}");
     }    
 
     // 1: right order // left side smaller value // left side fewer items
@@ -58,8 +56,8 @@ public class Solution_13_1 : ISolution
             if (r.Type == ElementType.Number) { r = new Element($"[{r.NumberValue}]"); }
 
             var listCompareResult = Compare(l, r);
-            if (listCompareResult < 0) return -1;
-            if (listCompareResult > 0) return 1;       
+                if (listCompareResult < 0) return -1;
+                if (listCompareResult > 0) return 1;       
         }
 
         return 1;  // left side out of items
@@ -84,10 +82,12 @@ public class Solution_13_1 : ISolution
 
             // now handle Lists
             NumberValue = -1;
-            SubElements = SeperateIntoSubelements(init).Select(sub => new Element(sub)).ToList();
+            SubElements = SeperateIntoSubElements(init)
+                            .Select(sub => new Element(sub))
+                            .ToList();
         }
 
-        private IList<string> SeperateIntoSubelements(string s) {
+        private IList<string> SeperateIntoSubElements(string s) {
             var result = new List<string>();
             
             if (s.Length == 2)
@@ -120,13 +120,7 @@ public class Solution_13_1 : ISolution
             if (Type == ElementType.Number) {
                 return NumberValue.ToString();
             } else {
-                var sb = new StringBuilder();
-                for (int i=0; i<SubElements.Count; i++) {
-                    sb.Append(SubElements[i].ToString());
-                    if (i != SubElements.Count-1)
-                        sb.Append(",");
-                }
-                return $"[{sb.ToString()}]";
+                return $"[{string.Join(',', SubElements.Select(e => e.ToString()))}]";
             }
         }
     }
