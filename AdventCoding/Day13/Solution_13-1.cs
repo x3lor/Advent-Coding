@@ -7,9 +7,11 @@ public class Solution_13_1 : ISolution
         Console.WriteLine("Starting ... ");
 
         var sum = 0;
+        var numCorrect = 0;
+        var numWrong = 0;
 
         var input = Input_13.input.Split('\n');
-
+    
         for(int i = 0; i<input.Length; i+=3) {
             
             var left  = new Element(input[i]);
@@ -17,34 +19,29 @@ public class Solution_13_1 : ISolution
 
             if (Compare(left, right) > 0) {
                 sum += (i/3)+1;
-                Console.WriteLine($"{(i/3)+1} is correct");
+                numCorrect++;
             } else {
-                //Console.WriteLine($"{(i/3)+1} is wrong");
+                numWrong++;
             }
         }
 
         Console.WriteLine($"done! Sum: {sum}");
+        Console.WriteLine($"korrekt: {numCorrect}");
+        Console.WriteLine($"falsch:  {numWrong}");
     }    
 
     // 1: right order // left side smaller value // left side fewer items
     // -1: wrong order
-    private int Compare(Element left, Element right) {
+    private static int Compare(Element left, Element right) {
 
-        if (left.Type == ElementType.Number || right.Type == ElementType.Number) {
-            throw new ArgumentException("wrong input");
-        }
+        for(int i=0; i<left.SubElements.Count; i++) {
+            var l = left.SubElements[i];
 
-        IList<Element> leftList  =  left.SubElements == null ? throw new ArgumentException() :  left.SubElements;
-        IList<Element> rightList = right.SubElements == null ? throw new ArgumentException() : right.SubElements;
-
-        for(int i=0; i<leftList.Count; i++) {
-            var l = leftList[i];
-
-            if (rightList.Count < i+1) {
+            if (right.SubElements.Count < i+1) {
                 return -1; // right out of items
             }
 
-            var r = rightList[i];
+            var r = right.SubElements[i];
 
             if (l.Type == ElementType.Number && r.Type == ElementType.Number) {
 
@@ -57,32 +54,15 @@ public class Solution_13_1 : ISolution
                 }
             }
 
-            if(l.Type == ElementType.List && r.Type == ElementType.List) {
-                var intermediate = Compare(l, r);
-                if (intermediate < 0)
-                    return -1;
-                if (intermediate > 0)
-                    return 1;
-                
-                continue;
-            }
+            if (l.Type == ElementType.Number) { l = new Element($"[{l.NumberValue}]"); }
+            if (r.Type == ElementType.Number) { r = new Element($"[{r.NumberValue}]"); }
 
-            if (l.Type == ElementType.Number) {
-                l = new Element($"[{l.NumberValue}]");
-            }
-
-            if (r.Type == ElementType.Number) {
-                r = new Element($"[{r.NumberValue}]");
-            }
-
-            var intermediate2 = Compare(l, r);
-                if (intermediate2 < 0)
-                    return -1;
-                if (intermediate2 > 0)  
-                    return 1;       
+            var listCompareResult = Compare(l, r);
+            if (listCompareResult < 0) return -1;
+            if (listCompareResult > 0) return 1;       
         }
 
-        return 1;   // left side out of items
+        return 1;  // left side out of items
     }
 
     private enum ElementType {
@@ -97,7 +77,7 @@ public class Solution_13_1 : ISolution
             Type = init.StartsWith("[") ? ElementType.List : ElementType.Number;
 
             if (Type == ElementType.Number) {
-                SubElements = null;
+                SubElements = new List<Element>();
                 NumberValue = int.Parse(init);
                 return;
             }
@@ -131,7 +111,7 @@ public class Solution_13_1 : ISolution
             return result;
         }
 
-        public IList<Element>? SubElements { get; }
+        public IList<Element> SubElements { get; }
         public int NumberValue { get; }
         public ElementType Type { get; }
 
@@ -141,7 +121,7 @@ public class Solution_13_1 : ISolution
                 return NumberValue.ToString();
             } else {
                 var sb = new StringBuilder();
-                for (int i=0; i<SubElements?.Count; i++) {
+                for (int i=0; i<SubElements.Count; i++) {
                     sb.Append(SubElements[i].ToString());
                     if (i != SubElements.Count-1)
                         sb.Append(",");
