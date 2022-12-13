@@ -19,27 +19,35 @@ public class Solution_13_1 : ISolution
                 sum += (i/3)+1;
                 Console.WriteLine($"{(i/3)+1} is correct");
             } else {
-                Console.WriteLine($"{(i/3)+1} is wrong");
+                //Console.WriteLine($"{(i/3)+1} is wrong");
             }
         }
 
         Console.WriteLine($"done! Sum: {sum}");
     }    
 
-    // 1: right order // left side smaller 
+    // 1: right order // left side smaller value // left side fewer items
     // -1: wrong order
     private int Compare(Element left, Element right) {
 
-        for(int i=0; i<left.SubElements.Count; i++) {
-            var l = left.SubElements[i];
+        if (left.Type == ElementType.Number || right.Type == ElementType.Number) {
+            throw new ArgumentException("wrong input");
+        }
 
-            if (right.SubElements.Count <= i) {
+        IList<Element> leftList  =  left.SubElements == null ? throw new ArgumentException() :  left.SubElements;
+        IList<Element> rightList = right.SubElements == null ? throw new ArgumentException() : right.SubElements;
+
+        for(int i=0; i<leftList.Count; i++) {
+            var l = leftList[i];
+
+            if (rightList.Count < i+1) {
                 return -1; // right out of items
             }
 
-            var r = right.SubElements[i];
+            var r = rightList[i];
 
             if (l.Type == ElementType.Number && r.Type == ElementType.Number) {
+
                 if (l.NumberValue > r.NumberValue) {
                     return -1; // left side is bigger
                 } else if (l.NumberValue < r.NumberValue) {
@@ -53,8 +61,10 @@ public class Solution_13_1 : ISolution
                 var intermediate = Compare(l, r);
                 if (intermediate < 0)
                     return -1;
-                else
-                    continue;
+                if (intermediate > 0)
+                    return 1;
+                
+                continue;
             }
 
             if (l.Type == ElementType.Number) {
@@ -68,6 +78,8 @@ public class Solution_13_1 : ISolution
             var intermediate2 = Compare(l, r);
                 if (intermediate2 < 0)
                     return -1;
+                if (intermediate2 > 0)  
+                    return 1;       
         }
 
         return 1;   // left side out of items
@@ -80,13 +92,12 @@ public class Solution_13_1 : ISolution
 
     private class Element {
 
-
         public Element(string init) {
 
             Type = init.StartsWith("[") ? ElementType.List : ElementType.Number;
 
             if (Type == ElementType.Number) {
-                SubElements = new List<Element>();
+                SubElements = null;
                 NumberValue = int.Parse(init);
                 return;
             }
@@ -96,50 +107,31 @@ public class Solution_13_1 : ISolution
             SubElements = SeperateIntoSubelements(init).Select(sub => new Element(sub)).ToList();
         }
 
-        // Example:
-        // [[[[8,9,9,0],4,[3,7,0,1],5,10],4,[2,[4,4,3,4,4],9,3,5],4,[[],7,[9,8,2,0],10,4]],[],[ 6,6,0,[]]]
-        // [[[6,8,9],1,[6,1,5],[6,5,10]],[2,4,[[10,1],8,[7,6,2],[],0]],[[0,9,[],[1,3]]],[[]],[0]]
-
         private IList<string> SeperateIntoSubelements(string s) {
             var result = new List<string>();
+            
             if (s.Length == 2)
                 return result;
 
             var current = s.Substring(1, s.Length-2);
-            
-            do {
-                var firstElement = GetFirstElement(current);
-                result.Add(firstElement);
-                
-                current = current.Substring(firstElement.Length);
 
-                if (current.StartsWith(','))
-                    current = current.Substring(1);
+            var start = 0;
+            var openBracketCounter = 0;
 
-            } while (current.Length > 0);
+            for (int i = 0; i<current.Length; i++) {
+                if (current[i] == ',' && openBracketCounter == 0) {
+                    result.Add(current.Substring(start, i-start));
+                    start = i+1;
+                }
+                if (current[i]=='[') openBracketCounter++;
+                if (current[i]==']') openBracketCounter--;
+            }
 
+            result.Add(current.Substring(start, current.Length-start));
             return result;
         }
 
-        private string GetFirstElement(string s) {
-            if (!s.Contains(','))
-                return s;
-
-            var openCounterCounter = 0;
-
-            for (int i=0; i<s.Length; i++) {
-                if (openCounterCounter == 0 && s[i]==',') {
-                    return s.Substring(0, i);
-                }
-
-                if (s[i]=='[') openCounterCounter++;
-                if (s[i]==']') openCounterCounter--;
-            }
-
-            return s;
-        }
-
-        public IList<Element> SubElements { get; }
+        public IList<Element>? SubElements { get; }
         public int NumberValue { get; }
         public ElementType Type { get; }
 
@@ -149,7 +141,7 @@ public class Solution_13_1 : ISolution
                 return NumberValue.ToString();
             } else {
                 var sb = new StringBuilder();
-                for (int i=0; i<SubElements.Count; i++) {
+                for (int i=0; i<SubElements?.Count; i++) {
                     sb.Append(SubElements[i].ToString());
                     if (i != SubElements.Count-1)
                         sb.Append(",");
