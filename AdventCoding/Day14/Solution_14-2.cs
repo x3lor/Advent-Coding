@@ -6,15 +6,18 @@ public class Solution_14_2 : ISolution
     {
         Console.WriteLine("Starting ... ");
 
-        var fInput = Input_14.input;
+        var input = Input_14.input;
         
-        // Get size of the grid
+        /////////////////////////////////////////////////////////////////////////
+        ////////                 Compute the size of the grid            //////// 
+        /////////////////////////////////////////////////////////////////////////
+
         var minX = int.MaxValue;
         var minY = int.MaxValue;
         var maxX = 0;
         var maxY = 0;
 
-        foreach(var line in fInput.Split('\n')) {
+        foreach(var line in input.Split('\n')) {
             
             var parts = line.Split(" -> ");
 
@@ -36,13 +39,16 @@ public class Solution_14_2 : ISolution
         }
 
         var gridHeight = maxY-minY+1+2;
-        var additionalWidthExpansion = (2*gridHeight);
+        var additionalWidthExpansion = gridHeight;
         var gridWidth = maxX-minX+1+(2*additionalWidthExpansion);
         
-        // get lines with real grid koordinates
+        /////////////////////////////////////////////////////////////////////////
+        ////////       Read lines and transform to grid coorinates       //////// 
+        /////////////////////////////////////////////////////////////////////////
+
         var polyLines = new List<List<Koord>>();
 
-        foreach(var line in fInput.Split('\n')) {
+        foreach(var line in input.Split('\n')) {
             
             var parts = line.Split(" -> ");
             var kLine = new List<Koord>();
@@ -59,7 +65,10 @@ public class Solution_14_2 : ISolution
             polyLines.Add(kLine);
         }    
 
-        // create grid
+        /////////////////////////////////////////////////////////////////////////
+        ////////            Create grid and fill it initially            //////// 
+        /////////////////////////////////////////////////////////////////////////
+
         var grid = new char[gridWidth, gridHeight];
 
         for(int x=0; x<gridWidth; x++) {
@@ -74,7 +83,10 @@ public class Solution_14_2 : ISolution
 
         grid[500-minX+additionalWidthExpansion, 0] = '+';
 
-        // draw lines into grid
+        /////////////////////////////////////////////////////////////////////////
+        ////////              Draw all lines into the grid               //////// 
+        /////////////////////////////////////////////////////////////////////////
+
         foreach(var polyLine in polyLines) {
 
             for (int i=0; i<polyLine.Count-1; i++) {
@@ -97,52 +109,31 @@ public class Solution_14_2 : ISolution
             }
         }
 
-        //PrintGrid(grid, gridWidth, gridHeight);
+        //WriteGridToFile(grid, gridWidth, gridHeight, "day14_part2_empty.txt");
 
-        // fill it with sand!
+        /////////////////////////////////////////////////////////////////////////
+        ////////                   Fill it with sand!                    //////// 
+        /////////////////////////////////////////////////////////////////////////
 
-        bool endIt = false;
+        bool finished = false;
         int sandcounter = 0;
 
-        while(true) {
+        while(!finished) {
 
-            if (endIt)
-                break;
-
-            // start at 500|0
             var current = new Koord() {X=500-minX+additionalWidthExpansion, Y=0};
-
+            // while-loop for placing ONE piece of sand
             while (true) {
 
-                if (endIt)
-                    break;
-
+                // move down until there is somthing
                 while (grid[current.X, current.Y+1] == '.') {
-
                     current.Y++;
-
-                    if(current.Y+1 >= gridHeight) {
-                        endIt=true;
-                        break;
-                    }
-                }
-
-                if(current.X-1 < 0 || current.Y+1 >= gridHeight) {
-                    endIt=true;
-                    break;
                 }
 
                 // is leftdown possible?
                 if (grid[current.X-1, current.Y+1] == '.') {
-
                     current.X--;
                     current.Y++;
                     continue;
-                }
-
-                if(current.X+1 >= gridWidth || current.Y+1 >= gridHeight) {
-                    endIt=true;
-                    break;
                 }
 
                 // is rightdown possible?
@@ -156,36 +147,32 @@ public class Solution_14_2 : ISolution
                 grid[current.X, current.Y] = 'o';
                 sandcounter++;
 
+                // check for finished-condition - is the sand placed on (500|0)?
                 if (current.X == 500-minX+additionalWidthExpansion &&
                     current.Y == 0) {
-                    endIt=true;
-                    break;
+                    finished=true;
                 }
 
-                //PrintGrid(grid, gridWidth, gridHeight);
                 break;
             }
         }
 
-        //PrintGrid(grid, gridWidth, gridHeight);
+        //WriteGridToFile(grid, gridWidth, gridHeight, "day14_part2_result.txt");
 
         Console.WriteLine("Done! Sand:" + sandcounter);
 
     }  
 
-    private void PrintGrid(char[,]grid, int gridWidth, int gridHeight) {
+    private void WriteGridToFile(char[,]grid, int gridWidth, int gridHeight, string filename) {
         
-        Console.WriteLine("\n");
-
-        for(int y=0; y<gridHeight; y++) {
-
-            var sb = new StringBuilder();
-
-            for (int x=0; x<gridWidth; x++) {
-                sb.Append(grid[x,y]);
+        using(StreamWriter textFile = File.CreateText(filename)) {
+            for(int y=0; y<gridHeight; y++) {
+                var sb = new StringBuilder();
+                for (int x=0; x<gridWidth; x++) {
+                    sb.Append(grid[x,y]);
+                }
+                textFile.WriteLine(sb.ToString());
             }
-
-            Console.WriteLine(sb.ToString());
         }
     }
 
