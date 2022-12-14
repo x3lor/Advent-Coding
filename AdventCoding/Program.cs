@@ -1,6 +1,6 @@
-﻿ISolution solution1 = new Solution_13_1();
+﻿ISolution solution1 = new Solution_14_1();
 solution1.run();
-ISolution solution2 = new Solution_13_2();
+ISolution solution2 = new Solution_14_2();
 solution2.run();
 
 
