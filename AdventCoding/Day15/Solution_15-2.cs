@@ -8,10 +8,6 @@ public class Solution_15_2 : ISolution
 
         var input = Input_15.input;
         var coordMax = 4000000;
-
-        //var input = Input_15.inputExample;
-        //var coordMax = 20;
-        
         var rhombs = new List<Rhomb>();
 
         foreach(var line in input.Split('\n')) {
@@ -24,52 +20,35 @@ public class Solution_15_2 : ISolution
             var beaconY = long.Parse(parts[9].Substring(2,parts[9].Length-2));
 
             rhombs.Add(new Rhomb(new Coord() {X=sensorX, Y=sensorY},
-                               new Coord() {X=beaconX, Y=beaconY}));
+                                 new Coord() {X=beaconX, Y=beaconY}));
         }
 
         var squares = CreateSqares(new Coord() {X=0, Y=0}, coordMax, 100);
-
         var notFullyCoveredSquares = new List<Square>();
 
-        foreach(var square in squares) {
-
-            
-            var anyRhombCoversThisSquare = rhombs.Any(r => IsSquareFullyCoveredByRaute(square, r));
-
-            if (!anyRhombCoversThisSquare) {
+        foreach(var square in squares) {        
+            if (!rhombs.Any(r => IsSquareFullyCoveredByRhomb(square, r))) {
                 notFullyCoveredSquares.Add(square);
             }
-
         }
 
         var notFullyCoveredSquares2 = new List<Square>();
 
         foreach(var square in notFullyCoveredSquares) {
-
             var subsquares = CreateSqares(square.P1, 40000, 100);
-
             foreach(var subSquare in subsquares) {
-
-                var anyRhombCoversThisSquare = rhombs.Any(r => IsSquareFullyCoveredByRaute(subSquare, r));
-
-                if (!anyRhombCoversThisSquare) {
+                if (!rhombs.Any(r => IsSquareFullyCoveredByRhomb(subSquare, r))) {
                     notFullyCoveredSquares2.Add(subSquare);
                 }
             }
-
         }
 
         var notFullyCoveredSquares3 = new List<Square>();
 
         foreach(var square in notFullyCoveredSquares2) {
-
             var subsquares = CreateSqares(square.P1, 400, 100);
-
             foreach(var subSquare in subsquares) {
-
-                var anyRhombCoversThisSquare = rhombs.Any(r => IsSquareFullyCoveredByRaute(subSquare, r));
-
-                if (!anyRhombCoversThisSquare) {
+                if (!rhombs.Any(r => IsSquareFullyCoveredByRhomb(subSquare, r))) {
                     notFullyCoveredSquares3.Add(subSquare);
                 }
             }
@@ -78,13 +57,9 @@ public class Solution_15_2 : ISolution
         var notFullyCoveredSquares4 = new List<Square>();
 
         foreach(var square in notFullyCoveredSquares3) {
-
             var subsquares = CreateSqares(square.P1, 4, 4);
-
             foreach(var subSquare in subsquares) {
-
-                var anyRhombCoversThisSquare = rhombs.Any(r => IsSquareFullyCoveredByRaute(subSquare, r));
-
+                var anyRhombCoversThisSquare = rhombs.Any(r => IsSquareFullyCoveredByRhomb(subSquare, r));
                 if (!anyRhombCoversThisSquare) {
                     notFullyCoveredSquares4.Add(subSquare);
                 }
@@ -92,7 +67,6 @@ public class Solution_15_2 : ISolution
         }
 
         var result = notFullyCoveredSquares4.First();
-
         Console.WriteLine($"DONE! Frequency: {result.P1.X*4000000+result.P1.Y}");
     }  
 
@@ -110,7 +84,7 @@ public class Solution_15_2 : ISolution
         return resultList;
     }
 
-    private bool IsSquareFullyCoveredByRaute(Square s, Rhomb r) {
+    private bool IsSquareFullyCoveredByRhomb(Square s, Rhomb r) {
         return IsPointWithinRhomb(s.P1, r) &&
                IsPointWithinRhomb(s.P2, r) &&
                IsPointWithinRhomb(s.P3, r) &&
@@ -157,28 +131,15 @@ public class Solution_15_2 : ISolution
     private class Rhomb {
 
         public Rhomb(Coord sensor, Coord beacon) {
-            var distance = GetManhattenDistance(sensor, beacon);
-
-            // P1 = new Coord() { X=sensor.X-distance, Y=sensor.Y          };
-            // P2 = new Coord() { X=sensor.X,          Y=sensor.Y-distance };
-            // P3 = new Coord() { X=sensor.X+distance, Y=sensor.Y          };
-            // P4 = new Coord() { X=sensor.X,          Y=sensor.Y+distance };
-
             Center = sensor;
-            Distance = distance;
+            Distance = GetManhattenDistance(sensor, beacon);
         }
 
         public Coord Center { get; }
         public long Distance { get; }
 
-        // public Coord P1 { get; }
-        // public Coord P2 { get; }
-        // public Coord P3 { get; }
-        // public Coord P4 { get; }
-
         private long GetManhattenDistance(Coord a, Coord b) {
             return Math.Abs(a.X-b.X) + Math.Abs(a.Y-b.Y);
         } 
     }
-   
 }
