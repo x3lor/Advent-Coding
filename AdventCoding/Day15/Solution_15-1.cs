@@ -1,5 +1,3 @@
-using System.Text;
-
 public class Solution_15_1 : ISolution
 {
     public void run()
@@ -9,6 +7,7 @@ public class Solution_15_1 : ISolution
         var input = Input_15.input;
         var importantLine = 2000000;
 
+        // for trying the example:
         // var input = Input_15.inputExample;
         // var importantLine = 10;
         
@@ -27,38 +26,31 @@ public class Solution_15_1 : ISolution
                              new Coord() {X=beaconX, Y=beaconY}));
         }
 
-        var listOfNos = new HashSet<long>();
-        var counter = 1;
+        var listOfCoveredCoordinates = new HashSet<long>();
 
         foreach(var set in sets) {
-
-            Console.WriteLine($"{counter++}/40; ");
-            var dis = GetManhattenDistance(set.Sensor, set.Beacon);
-
-            if (set.Sensor.Y-dis < importantLine && set.Sensor.Y+dis > importantLine) {
-
+            var distanceSensorToBeacon = GetManhattenDistance(set.Sensor, set.Beacon);
+            if (SensorIsInRelevantDistance(set.Sensor, distanceSensorToBeacon, importantLine)) {
                 var currentPos = new Coord() {X=0, Y=importantLine};
-
-                for (long x=set.Sensor.X-dis; x<=set.Sensor.X+dis; x++) {
-                       
-                        //if (x%100000 == 0)
-                          //  Console.Write("x");
-
+                for (long x=set.Sensor.X-distanceSensorToBeacon; x<=set.Sensor.X+distanceSensorToBeacon; x++) {
                         currentPos.X = x;
-                        
-                        if (GetManhattenDistance(set.Sensor, currentPos) <= dis) {
-                            if (!IsThereAnB(sets, currentPos))                                
-                                listOfNos.Add(currentPos.X);
+                        if (GetManhattenDistance(set.Sensor, currentPos) <= distanceSensorToBeacon) {
+                            if (NoBeaconAtCoord(sets, currentPos))                                
+                                listOfCoveredCoordinates.Add(currentPos.X);
                     }
                 }
             } 
         }
 
-        Console.WriteLine($"DONE! #NO: {listOfNos.Count}");
+        Console.WriteLine($"DONE! NumberOfCoveredSpots in Line {importantLine}: {listOfCoveredCoordinates.Count}");
     }  
 
-    private bool IsThereAnB(List<Set> sets, Coord a) {
-        return sets.Any(c => c.Beacon.X == a.X && c.Beacon.Y == a.Y);
+    private bool SensorIsInRelevantDistance(Coord sensor, long distanceSensorToBeacon, long importantLine) {
+        return sensor.Y-distanceSensorToBeacon < importantLine && sensor.Y+distanceSensorToBeacon > importantLine;
+    }
+
+    private bool NoBeaconAtCoord(List<Set> sets, Coord a) {
+        return !sets.Any(c => c.Beacon.X == a.X && c.Beacon.Y == a.Y);
     }
 
     private long GetManhattenDistance(Coord a, Coord b) {
@@ -83,11 +75,5 @@ public class Solution_15_1 : ISolution
 
         public Coord Sensor { get; }
         public Coord Beacon { get; }
-
-        public override string ToString()
-        {
-            return $"Sensor: {Sensor.ToString()}; Beacon: {Beacon.ToString()}";
-        }
     }
-   
 }

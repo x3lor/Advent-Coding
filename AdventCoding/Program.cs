@@ -1,7 +1,7 @@
-﻿ISolution solution1 = new Solution_15_2();
+﻿ISolution solution1 = new Solution_15_1();
 solution1.run();
-//ISolution solution2 = new Solution_14_2();
-//solution2.run();
+ISolution solution2 = new Solution_15_2();
+solution2.run();
 
 
 //visualization day 7
