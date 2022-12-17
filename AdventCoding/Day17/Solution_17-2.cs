@@ -5,55 +5,81 @@ public class Solution_17_2 : ISolution
     public void run()
     {
         Console.WriteLine("Starting ... ");
+
         var input = Input_17.input;
-        var inputLength = input.Length;
-        var lengthToCompute = inputLength*5;
 
-        var tetrisGrid = new TetrisGrid(input, lengthToCompute*10);
-
-        for (int i=0; i<lengthToCompute; i++) {
-            tetrisGrid.AddNextShape();
-        }
-
-        var intermediate = tetrisGrid.GetCurrentHeight();
-
-        for (int i=0; i<lengthToCompute; i++) {
-            tetrisGrid.AddNextShape();
-        }
-
-        var end = tetrisGrid.GetCurrentHeight();
-
-        Console.WriteLine($"intermediate height: {intermediate}");
-        Console.WriteLine($"end height: {end}");
-        Console.WriteLine($"gridHeight: {lengthToCompute*10}");
-        Console.WriteLine($"inputlength: {inputLength}"); 
-        Console.WriteLine($"length to compute: {lengthToCompute}"); 
-        Console.WriteLine("\nBottom:");
-        tetrisGrid.PrintGrid(15);
-        Console.WriteLine("\nMiddle:");
-        tetrisGrid.PrintGrid(intermediate-10, intermediate+10);
-        Console.WriteLine("\ntop:");
-        tetrisGrid.PrintGrid(tetrisGrid.GetCurrentHeight()-15, tetrisGrid.GetCurrentHeight()+5);
-
-      
-        // var heightOfJunk = tetrisGrid.GetCurrentHeight();
-        // var bricks = 1000000000000L;
-
-        // var numberOfJunks = bricks / lengthToCompute;
-        // var restToCompute = bricks % lengthToCompute;
-
-        // var tetrisGrid2 = new TetrisGrid(input, (int)restToCompute*6);
-        // for (int i=0; i<restToCompute; i++) {
-        //     tetrisGrid2.AddNextShape();
+        // var experimentGrid = new TetrisGrid(input, 1000*5);
+        // for (int i=0; i<1000; i++) {
+        //     experimentGrid.AddNextShape();
         // }
-        // var heightOfRest = tetrisGrid2.GetCurrentHeight();
 
-        // var result = numberOfJunks * heightOfJunk + heightOfRest;
 
-        // should: 1514285714288
-        //     is: 1539999999999
+        var heightOfJunk = 2630;
+        var heightOfFirstJunk = 2611;
+        var numberOfBricksInFirstJunk = 1723;
+        var numberOfBricksInAJunk = 1725;
 
-        //Console.WriteLine($"done! Height): {result}");
+        /*
+            2611 | 1723
+            2630 | 1725
+            2630 | 1725
+            2630 | 1725
+            2630 | 1725
+            2630 | 1725
+
+
+            1524637681152
+
+            1524637681149 (too high)
+
+            1524637681130 (too low)
+            1524637681126 (too low)
+            1524637681112
+
+        */
+
+        // var heightOfJunk = 53;
+        // var heightOfFirstJunk = 39;
+        // var numberOfBricksInFirstJunk = 22;
+        // var numberOfBricksInAJunk = 35;
+
+        var bricks = 1000000000000L;
+        var bricksWithoutFirstIteration = bricks - numberOfBricksInFirstJunk;
+
+        var totalHeight = 0L;
+        totalHeight += heightOfFirstJunk; 
+
+        var numberOfJunks = bricksWithoutFirstIteration / numberOfBricksInAJunk;
+        totalHeight += numberOfJunks * heightOfJunk;
+
+        var restOfTheBricks = bricksWithoutFirstIteration % numberOfBricksInAJunk;
+
+        for (int s=0; s<5; s++) {
+            var tetrisGrid = new TetrisGrid(input, (int)restOfTheBricks*5, s);
+
+            for (int i=0; i<restOfTheBricks; i++) {
+                tetrisGrid.AddNextShape();
+            }
+
+            Console.WriteLine(totalHeight + tetrisGrid.GetCurrentHeight());
+        }
+
+        //Console.WriteLine(totalHeight);
+
+        // var tetrisGrid = new TetrisGrid(input, 10000*5);
+        // for (int i=0; i<10000; i++) {
+        //     tetrisGrid.AddNextShape();
+        // }
+        
+
+        
+        
+
+        // Console.WriteLine("Start search");
+
+        // tetrisGrid.SearchForPatterns();
+
+        Console.WriteLine("Done");
     }   
 
     private class TetrisGrid {
@@ -63,10 +89,10 @@ public class Solution_17_2 : ISolution
         private Shapes shapes;
         private int currentHeight = 0;
 
-        public TetrisGrid(string input, int gridHeight) {
+        public TetrisGrid(string input, int gridHeight, int startShapeIndex) {
 
             directions = new Directions(input);
-            shapes = new Shapes();
+            shapes = new Shapes(startShapeIndex);
             this.gridHeight = gridHeight;
 
             grid = new char[7,gridHeight];
@@ -78,13 +104,82 @@ public class Solution_17_2 : ISolution
             }
         }
 
+        public void SearchForPatterns() {
+
+            Console.WriteLine("Build string list");
+
+            var gridAsStrings = new List<string>(currentHeight);
+
+            var sb = new StringBuilder();
+            for (int i=gridHeight-1; i>gridHeight-currentHeight; i--) {
+            
+                for (int x=0; x<7; x++) {
+                    sb.Append(grid[x, i]);
+                }
+                
+                gridAsStrings.Add(sb.ToString());
+                sb.Clear();
+            }
+
+            Console.WriteLine("string list done");
+
+
+            /*
+
+            using(StreamWriter textFile = File.CreateText("test.txt")) {
+                foreach(string s in gridAsStrings) {
+                    textFile.WriteLine(s);
+                }
+            }
+            
+            */
+
+            for (int i = 1; i<10; i++) {
+                for (int row=100; row<currentHeight-100; row++) {
+
+                    for (int patternscan=0; patternscan<100; patternscan++) {
+
+                        if (patternscan == 10) {
+                            Console.WriteLine("FOUND !!!!!" + row.ToString());
+                            break;
+                        }
+
+                        if (gridAsStrings[row+patternscan] != gridAsStrings[patternscan+i+50]) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Pattern search done");
+
+        }
+
+        public int GetShapeIndex() {
+            return shapes.GetIndex();
+        }
+
+        public int GetMoveIndes() {
+            return directions.GetIndex();
+        }
+
+        private int lastPrintedHeight = 0;
+        private int shapeCounter = 0;
+
         public void AddNextShape() {
             
             var shape = shapes.GetNext();
             var coord = GetStartingPositionForShape(shape);
+            
 
             while (true) {
                 var nextLeftRight = directions.GetNext();
+
+                // if (directions.GetIndex() == 0) {
+                //     Console.WriteLine($"{currentHeight-lastPrintedHeight} | {shapeCounter} | currentShapeIndex: {shapes.GetIndex()}");
+                //     lastPrintedHeight = currentHeight;
+                //     shapeCounter = 0;
+                // }
 
                 if (IsMovePossible(shape, nextLeftRight, coord)) {
                     if (nextLeftRight == Direction.Left)  coord.X--;
@@ -98,6 +193,7 @@ public class Solution_17_2 : ISolution
                 }
             }
 
+            shapeCounter++;
             WriteShape(shape, coord);
         }
 
@@ -301,6 +397,10 @@ public class Solution_17_2 : ISolution
             position = 0;
         }
 
+        public int GetIndex() {
+            return position;
+        }
+
         public Direction GetNext() {
             var currentChar = input[position++];
 
@@ -327,7 +427,8 @@ public class Solution_17_2 : ISolution
 
         private List<Shape> allShapes;
 
-        public Shapes() {
+        public Shapes(int startShapeIndex) {
+            index = startShapeIndex;
             allShapes = new List<Shape>() {
                 Shape.Minus,
                 Shape.Plus,
@@ -335,6 +436,10 @@ public class Solution_17_2 : ISolution
                 Shape.Pipe,
                 Shape.Square
             };
+        }
+
+        public int GetIndex() {
+            return index;
         }
 
         public Shape GetNext() {
