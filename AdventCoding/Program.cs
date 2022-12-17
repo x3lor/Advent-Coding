@@ -1,4 +1,4 @@
-﻿ISolution solution1 = new Solution_16_2();
+﻿ISolution solution1 = new Solution_17_2();
 solution1.run();
 // ISolution solution2 = new Solution_16_2();
 // solution2.run();
