@@ -8,7 +8,7 @@ xtwone3four
 zoneight234
 7pqrstsixteen";
 
-    public static string input = 
+public static string input = 
 @"threerznlrhtkjp23mtflmbrzq395three
 9sevenvlttm
 3twochzbv

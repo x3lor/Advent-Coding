@@ -15,15 +15,13 @@ public class Solution_1_2_23 : ISolution
             var first  = digitList.First();
             var second = digitList.Last();
             var num = first * 10 + second;
-            sum += num;       
-
-            //Console.WriteLine($"{line}; first: {first}; last: {second}");
+            sum += num;                   
         }
 
         Console.WriteLine($"done! Sum: {sum}");
     }
 
-    public List<int> divide(string s) {
+    public static List<int> divide(string s) {
 
         var result = new List<int>();
         var stringPtr = 0;
@@ -52,7 +50,7 @@ public class Solution_1_2_23 : ISolution
         return result;
     }
 
-    public bool isNumber(string s) {
+    public static bool isNumber(string s) {
         return s[0] >= '0' && s[0] <= '9';
     }
 }
