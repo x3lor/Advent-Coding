@@ -157,7 +157,7 @@ public class Solution_14_2 : ISolution
             }
         }
 
-        //WriteGridToFile(grid, gridWidth, gridHeight, "day14_part2_result.txt");
+        WriteGridToFile(grid, gridWidth, gridHeight, "day14_part2_result.txt");
 
         Console.WriteLine("Done! Sand:" + sandcounter);
 

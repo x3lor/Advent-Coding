@@ -1,4 +1,4 @@
-﻿ISolution solution1 = new Solution_17_2();
+﻿ISolution solution1 = new Solution_1_2_23();
 solution1.run();
 // ISolution solution2 = new Solution_16_2();
 // solution2.run();
@@ -18,3 +18,4 @@ solution1.run();
 // foreach(var item in items) {
 //     Console.WriteLine(string.Join(',', item));
 // }
+

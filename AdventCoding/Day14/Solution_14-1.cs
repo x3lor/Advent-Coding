@@ -157,7 +157,7 @@ public class Solution_14_1 : ISolution
             }
         }
 
-        //PrintGrid(grid, gridWidth, gridHeight);
+        PrintGrid(grid, gridWidth, gridHeight);
         Console.WriteLine("Done! Sand:" + sandcounter);
     }  
 

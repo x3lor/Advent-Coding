@@ -8,16 +8,11 @@ public class Solution_17_2 : ISolution
 
         var input = Input_17.input;
 
-        // var experimentGrid = new TetrisGrid(input, 1000*5);
-        // for (int i=0; i<1000; i++) {
+        // var experimentGrid = new TetrisGrid(input, 2000*5, 0);
+        // for (int i=0; i<2000; i++) {
         //     experimentGrid.AddNextShape();
         // }
 
-
-        var heightOfJunk = 2630;
-        var heightOfFirstJunk = 2611;
-        var numberOfBricksInFirstJunk = 1723;
-        var numberOfBricksInAJunk = 1725;
 
         /*
             2611 | 1723
@@ -27,57 +22,49 @@ public class Solution_17_2 : ISolution
             2630 | 1725
             2630 | 1725
 
-
+,
             1524637681152
 
             1524637681149 (too high)
+            1524637681148 ... too high
 
+            1524637681137 --> muss auch too low sein
+            1524637681136 --> muss auch too low sein
+            1524637681135 --> muss auch too low sein
+            1524637681134 --> muss auch too low sein
+            1524637681133 --> muss auch too low sein
+            1524637681132 --> muss auch too low sein
+            1524637681131 --> muss auch too low sein
             1524637681130 (too low)
+            1524637681128
             1524637681126 (too low)
             1524637681112
 
         */
 
-        // var heightOfJunk = 53;
-        // var heightOfFirstJunk = 39;
-        // var numberOfBricksInFirstJunk = 22;
-        // var numberOfBricksInAJunk = 35;
+        var heightOfJunk = 2630;
+        var heightOfFirstJunk = 2613;
+        var numberOfBricksInFirstJunk = 1724;
+        var numberOfBricksInAJunk = 1725;
 
         var bricks = 1000000000000L;
-        var bricksWithoutFirstIteration = bricks - numberOfBricksInFirstJunk;
+        var bricksWithoutFirstIteration = bricks - numberOfBricksInFirstJunk; // 999999998277
 
         var totalHeight = 0L;
         totalHeight += heightOfFirstJunk; 
 
-        var numberOfJunks = bricksWithoutFirstIteration / numberOfBricksInAJunk;
+        var numberOfJunks = bricksWithoutFirstIteration / numberOfBricksInAJunk; // 579710143
         totalHeight += numberOfJunks * heightOfJunk;
 
-        var restOfTheBricks = bricksWithoutFirstIteration % numberOfBricksInAJunk;
+        var restOfTheBricks = (bricksWithoutFirstIteration % numberOfBricksInAJunk)-1; // 1602
 
-        for (int s=0; s<5; s++) {
-            var tetrisGrid = new TetrisGrid(input, (int)restOfTheBricks*5, s);
-
+        //for (int startingShapeIndex=0; startingShapeIndex<5; startingShapeIndex++) {
+            var tetrisGrid = new TetrisGrid(input, (int)restOfTheBricks*5, 0);
             for (int i=0; i<restOfTheBricks; i++) {
                 tetrisGrid.AddNextShape();
             }
-
             Console.WriteLine(totalHeight + tetrisGrid.GetCurrentHeight());
-        }
-
-        //Console.WriteLine(totalHeight);
-
-        // var tetrisGrid = new TetrisGrid(input, 10000*5);
-        // for (int i=0; i<10000; i++) {
-        //     tetrisGrid.AddNextShape();
-        // }
-        
-
-        
-        
-
-        // Console.WriteLine("Start search");
-
-        // tetrisGrid.SearchForPatterns();
+        //}
 
         Console.WriteLine("Done");
     }   
@@ -104,56 +91,6 @@ public class Solution_17_2 : ISolution
             }
         }
 
-        public void SearchForPatterns() {
-
-            Console.WriteLine("Build string list");
-
-            var gridAsStrings = new List<string>(currentHeight);
-
-            var sb = new StringBuilder();
-            for (int i=gridHeight-1; i>gridHeight-currentHeight; i--) {
-            
-                for (int x=0; x<7; x++) {
-                    sb.Append(grid[x, i]);
-                }
-                
-                gridAsStrings.Add(sb.ToString());
-                sb.Clear();
-            }
-
-            Console.WriteLine("string list done");
-
-
-            /*
-
-            using(StreamWriter textFile = File.CreateText("test.txt")) {
-                foreach(string s in gridAsStrings) {
-                    textFile.WriteLine(s);
-                }
-            }
-            
-            */
-
-            for (int i = 1; i<10; i++) {
-                for (int row=100; row<currentHeight-100; row++) {
-
-                    for (int patternscan=0; patternscan<100; patternscan++) {
-
-                        if (patternscan == 10) {
-                            Console.WriteLine("FOUND !!!!!" + row.ToString());
-                            break;
-                        }
-
-                        if (gridAsStrings[row+patternscan] != gridAsStrings[patternscan+i+50]) {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            Console.WriteLine("Pattern search done");
-
-        }
 
         public int GetShapeIndex() {
             return shapes.GetIndex();
@@ -163,8 +100,9 @@ public class Solution_17_2 : ISolution
             return directions.GetIndex();
         }
 
-        private int lastPrintedHeight = 0;
-        private int shapeCounter = 0;
+        // private int lastPrintedHeight = 0;
+        // private int shapeCounter = 0;
+        // private int printNext = -1;
 
         public void AddNextShape() {
             
@@ -174,12 +112,6 @@ public class Solution_17_2 : ISolution
 
             while (true) {
                 var nextLeftRight = directions.GetNext();
-
-                // if (directions.GetIndex() == 0) {
-                //     Console.WriteLine($"{currentHeight-lastPrintedHeight} | {shapeCounter} | currentShapeIndex: {shapes.GetIndex()}");
-                //     lastPrintedHeight = currentHeight;
-                //     shapeCounter = 0;
-                // }
 
                 if (IsMovePossible(shape, nextLeftRight, coord)) {
                     if (nextLeftRight == Direction.Left)  coord.X--;
@@ -193,8 +125,25 @@ public class Solution_17_2 : ISolution
                 }
             }
 
-            shapeCounter++;
+            //shapeCounter++;
             WriteShape(shape, coord);
+
+            // if (printNext > 0) {
+            //     printNext--;
+            //     Console.WriteLine();
+            //     PrintGrid(currentHeight-15, currentHeight+5);
+            //     Console.WriteLine();
+            // }
+
+            // if (directions.GetIndex() == 0) {
+            //     Console.WriteLine($"{currentHeight-lastPrintedHeight} | {shapeCounter} | next shape: {shapes.GetIndex()}");
+            //     lastPrintedHeight = currentHeight;
+            //     shapeCounter = 0;
+            //     Console.WriteLine();
+            //     PrintGrid(currentHeight-15, currentHeight+5);
+            //     Console.WriteLine();
+            //     printNext = 10;
+            // }
         }
 
         private bool IsMovePossible(Shape s, Direction r, Coord c) {
