@@ -3,7 +3,6 @@ public class Solution_1_1_23 : ISolution
     public void run()
     {
         Console.Write("Starting ... ");
-
         var sum = 0;
 
         foreach(var line in Input_1_23.input.Split('\n')) {

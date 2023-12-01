@@ -17,7 +17,7 @@ public class Solution_1_2_23 : ISolution
             var num = first * 10 + second;
             sum += num;       
 
-            Console.WriteLine($"{line}; first: {first}; last: {second}");
+            //Console.WriteLine($"{line}; first: {first}; last: {second}");
         }
 
         Console.WriteLine($"done! Sum: {sum}");
@@ -36,15 +36,15 @@ public class Solution_1_2_23 : ISolution
                 continue;
             }
 
-            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "one"  ) { result.Add(1); stringPtr += 3; continue; }}
-            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "two"  ) { result.Add(2); stringPtr += 3; continue; }}
-            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "three") { result.Add(3); stringPtr += 5; continue; }}
-            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "four" ) { result.Add(4); stringPtr += 4; continue; }}
-            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "five" ) { result.Add(5); stringPtr += 4; continue; }}
-            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "six"  ) { result.Add(6); stringPtr += 3; continue; }}
-            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "seven") { result.Add(7); stringPtr += 5; continue; }}
-            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "eight") { result.Add(8); stringPtr += 5; continue; }}
-            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "nine" ) { result.Add(9); stringPtr += 4; continue; }}
+            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "one"  ) { result.Add(1); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "two"  ) { result.Add(2); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "three") { result.Add(3); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "four" ) { result.Add(4); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "five" ) { result.Add(5); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 3) { if (s.Substring(stringPtr, 3) == "six"  ) { result.Add(6); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "seven") { result.Add(7); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 5) { if (s.Substring(stringPtr, 5) == "eight") { result.Add(8); stringPtr += 1; continue; }}
+            if (s.Length-stringPtr >= 4) { if (s.Substring(stringPtr, 4) == "nine" ) { result.Add(9); stringPtr += 1; continue; }}
 
             stringPtr++;
         }
