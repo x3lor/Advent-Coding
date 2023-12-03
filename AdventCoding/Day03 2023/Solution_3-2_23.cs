@@ -21,14 +21,13 @@ public class Solution_3_2_23 : ISolution
                     stars.Add(new Star(ptrX, ptrY));                                                    
                     ptrX++;
                 } else if (isAtNumber(stringarray, ptrX, ptrY)) {
-                    var number = new Number(getNumber(stringarray, ptrX, ptrY), ptrX, ptrY);
+                    var number = getNumber(stringarray, ptrX, ptrY);
                     numbers.Add(number);
                     ptrX += number.Length;
                 } else {
                     ptrX++;
                 }
             }
-
             ptrY++;
         }
 
@@ -43,7 +42,7 @@ public class Solution_3_2_23 : ISolution
         return array[y][x] >= '0' && array[y][x] <= '9';
     }
 
-    public static int getNumber(List<string> array, int x, int y) {
+    public static Number getNumber(List<string> array, int x, int y) {
 
          var lineLenth = array[0].Length;
 
@@ -54,7 +53,7 @@ public class Solution_3_2_23 : ISolution
             end++;
         }
 
-        return int.Parse(array[y].Substring(start, end-start));
+        return new Number(int.Parse(array[y].Substring(start, end-start)), x, y);
     }
 
     public class Number {
@@ -95,9 +94,6 @@ public class Solution_3_2_23 : ISolution
 
             return 0;
         }
-
-        // num X=1 length 3
-        // star x=4
 
         private bool IsNumberAdjecent(Number num) {
             
