@@ -4,34 +4,19 @@ public class Solution_4_2_23 : ISolution
     {
         Console.Write("Starting ... ");
 
-        
-        var games = new List<Game>();
-        
-
-        foreach(var line in Input_4_23.input.Split('\n')) {
-
-                var gameNumber = int.Parse(line.Substring(5, 3))-1;
-
-                var firstNumbers = line.Substring(10, 29)
-                                       .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                       .Select(part => int.Parse(part))
-                                       .ToList();
-
-                var secondNumbers = line.Substring(42)
-                                        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                        .Select(part => int.Parse(part))
-                                        .ToList();   
-
-                var matches = firstNumbers.Intersect(secondNumbers).Count();   
-                            
-                games.Add(new Game {
-                    Number = gameNumber,
-                    Matches = matches
-                });
-        }
+        var matchList = Input_4_23.input
+                                  .Split('\n')
+                                  .Select(line => line.Substring(10, 29)
+                                                      .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                                      .Select(part => int.Parse(part))
+                                                      .Intersect(line.Substring(42)
+                                                                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                                                     .Select(part => int.Parse(part)))
+                                                      .Count())
+                                  .ToList();
 
         var stack = new Stack<int>();
-        for (int i=games.Count-1; i>=0; i--) {
+        for (int i=matchList.Count-1; i>=0; i--) {
             stack.Push(i);
         }
 
@@ -39,7 +24,7 @@ public class Solution_4_2_23 : ISolution
 
         while (stack.Count > 0) {
             var gameNumber = stack.Pop();
-            var matches = games[gameNumber].Matches;
+            var matches = matchList[gameNumber];
             sum++;
 
             for (int i=gameNumber+1; i<gameNumber+1+matches; i++) {
@@ -48,10 +33,5 @@ public class Solution_4_2_23 : ISolution
         }        
 
         Console.WriteLine($"done! Sum: {sum}");
-    }
-
-    public class Game {
-        public int Number {get; set;}
-        public int Matches {get; set;}
     }
 }
