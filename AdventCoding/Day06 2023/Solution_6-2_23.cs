@@ -6,9 +6,8 @@ public class Solution_6_2_23 : ISolution
     {
         Console.Write("Starting...");
 
-        var lines = Input_6_23.input2.Split('\n').ToList();
-        var time     = long.Parse(lines[0]);
-        var distance = long.Parse(lines[1]);
+        var time     = long.Parse(Input_6_23.input2.Split('\n')[0]);
+        var distance = long.Parse(Input_6_23.input2.Split('\n')[1]);
 
         var counter = 0L;
         for (long timetries=1; timetries<time; timetries++) {
