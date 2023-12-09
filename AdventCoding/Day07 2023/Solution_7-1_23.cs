@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 public class Solution_7_1_23 : ISolution
 {
     public void run()
@@ -45,11 +43,11 @@ public class Solution_7_1_23 : ISolution
 
     public class Hand {
 
-        private static List<char> possibleChars = new List<char> { '2','3','4','5','6','7','8','9','T','J','Q','K','A' };
+        private static readonly List<char> possibleChars = new() { '2','3','4','5','6','7','8','9','T','J','Q','K','A' };
 
         public Hand(string init) {
-            Cards = init.Substring(0, 5);
-            Bid = int.Parse(init.Substring(6));
+            Cards = init[..5];
+            Bid = int.Parse(init[6..]);
             HandType = GetHandType(Cards);
             Rank = 0;
             CompareNumber = GetCompareNumber(Cards);
