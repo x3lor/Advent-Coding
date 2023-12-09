@@ -31,13 +31,13 @@ public class Solution_8_2_23 : ISolution
             stepsList.Add(steps);
         }
 
-        var result = LMC(stepsList);
+        var result = LCM(stepsList);
         Console.WriteLine($"Done: {result}");
     }
 
     static long GCD(long n1, long n2) => (n2 == 0) ? n1 : GCD(n2, n1 % n2);
 
-    public static long LMC(List<long> numbers)
+    public static long LCM(List<long> numbers)
     {
         return numbers.Aggregate((S, val) => S * val / GCD(S, val));
     }
