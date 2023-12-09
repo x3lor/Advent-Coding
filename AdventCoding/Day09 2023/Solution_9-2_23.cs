@@ -11,8 +11,8 @@ public class Solution_9_2_23 : ISolution
             var listOfLines = new List<List<int>>();
 
             var currentLine = line.Split(' ')
-                                .Select(num => int.Parse(num))
-                                .ToList();
+                                  .Select(num => int.Parse(num))
+                                  .ToList();
 
             while (!IsLineOnlyZero(currentLine)) {
                 listOfLines.Add(currentLine);
@@ -25,11 +25,11 @@ public class Solution_9_2_23 : ISolution
             listOfLines[listOfLines.Count-1].Insert(0,0);
 
             for (int i=listOfLines.Count-2; i>=0; i--) {
-                var nextNum = listOfLines[i].First() - listOfLines[i+1].First();
+                var nextNum = listOfLines[i][0] - listOfLines[i+1][0];
                 listOfLines[i].Insert(0, nextNum);
             }
 
-            sum += listOfLines[0].First();
+            sum += listOfLines[0][0];
         }        
 
         Console.WriteLine($"Done ... sum: {sum}");

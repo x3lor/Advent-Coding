@@ -8,47 +8,37 @@ public class Solution_8_2_23 : ISolution
         var nodesDict = Input_8_23.input_nodes
                                   .Split('\n')
                                   .ToDictionary(node => node.Substring(0, 3), 
-                                                node => node);
-       
+                                                node => node);       
 
-        var nodes = new List<string> { "AAA", "GGA", "DXA", "LTA", "BJA", "XVA" };
-        var stepsFirstList = new List<int>();
-        var stepsCyclusList = new List<int>();
+        var nodes = nodesDict.Keys.Where(key => key.EndsWith('A'));
+        var stepsList = new List<long>();
 
         foreach (var node in nodes) {
 
             var steps = 0;
             string currentPosition = nodesDict[node];
-            var reached = false;
-            var reached_two = false;
-
-            Console.WriteLine($"\n\nNode: {currentPosition}");
-
-            while (!reached_two) {
+        
+            while (currentPosition.Substring(2,1) != "Z") {
 
                 var nextInstruction = instructions[steps%instructions.Length];
 
-                if (nextInstruction == 'L') {
-                    currentPosition = nodesDict[currentPosition.Substring(7,3)];
-                } else {
-                    currentPosition = nodesDict[currentPosition.Substring(12,3)];
-                }
+                currentPosition = nextInstruction == 'L' 
+                                    ? nodesDict[currentPosition.Substring(7,3)] 
+                                    : nodesDict[currentPosition.Substring(12,3)];
 
                 steps++;
-
-                if (currentPosition.Substring(2,1) == "Z") {
-
-                    if (reached == false) {
-                        reached = true;
-                        stepsFirstList.Add(steps);
-                        Console.WriteLine($"FirstReach: {steps} on {currentPosition}");
-                    } else {
-                        reached_two = true;
-                        stepsCyclusList.Add(steps - stepsFirstList.Last());
-                        Console.WriteLine($"Zyklus: {steps - stepsFirstList.Last()} on {currentPosition}");
-                    }                    
-                }
             }
+            stepsList.Add(steps);
         }
+
+        var result = LMC(stepsList);
+        Console.WriteLine($"Done: {result}");
+    }
+
+    static long GCD(long n1, long n2) => (n2 == 0) ? n1 : GCD(n2, n1 % n2);
+
+    public static long LMC(List<long> numbers)
+    {
+        return numbers.Aggregate((S, val) => S * val / GCD(S, val));
     }
 }

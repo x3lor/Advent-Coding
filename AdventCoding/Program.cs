@@ -1,3 +1,3 @@
-﻿ISolution solution = new Solution_9_2_23();
+﻿ISolution solution = new Solution_8_2_23();
 solution.run();
 
