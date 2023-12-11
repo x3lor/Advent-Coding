@@ -33,14 +33,12 @@ public class Solution_11_2_23 : ISolution
         var galaxies = new List<Coord>();
 
         long onTopOfRows = 0;
-
         for (int y=0; y<grid.Length; y++) {
 
             if (emptyLines.Contains(y))
                 onTopOfRows += 999999L;
 
             long onTopOfColumns = 0;
-
             for (int x=0; x<grid[0].Length; x++) {
 
                 if (emptyColumns.Contains(x)) {
