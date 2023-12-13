@@ -6,30 +6,14 @@ public class Solution_12_2_23 : ISolution
     {
         Console.WriteLine("Starting...");
 
-    
-        //Console.WriteLine(GetAllPerm(new List<int>{9, 1, 0}, 0, 1, true));
-
-        // var sum = 0;
-        
-        // foreach(var line in Input_12_23.example.Split('\n')) {
-
-            
-
-        //     var parts = line.Split(' ');
-        //     var pattern    = parts[0]+"?"+parts[0]+"?"+parts[0]+"?"+parts[0]+"?"+parts[0];
-        //     var numberList = parts[1]+","+parts[1]+","+parts[1]+","+parts[1]+","+parts[1];
-        // }
-        // Console.WriteLine($"Done! Sum: {sum}");
-
-
         var sum = 0L;        
         var counter = 0;
 
         foreach(var line in Input_12_23.example.Split('\n')) {
             Console.Write($"\r{counter++} of 1000");
             var parts = line.Split(' '); 
-            var pattern    = parts[0]+"?"+parts[0]+"?"+parts[0]+"?"+parts[0]+"?"+parts[0];
-            var numberList = parts[1]+","+parts[1]+","+parts[1]+","+parts[1]+","+parts[1];
+            var pattern    = parts[0]; //+"?"+parts[0]+"?"+parts[0]+"?"+parts[0]+"?"+parts[0];
+            var numberList = parts[1]; //+","+parts[1]+","+parts[1]+","+parts[1]+","+parts[1];
             var game = new Game(pattern, numberList);
             sum += game.GetPosibilities();  
         }

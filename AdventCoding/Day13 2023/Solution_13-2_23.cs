@@ -18,21 +18,27 @@ public class Solution_13_2_23 : ISolution
             }
         }
         grids.Add(new Grid(tmpList.ToList()));
-
+        
         var sum = 0;
         foreach(var grid in grids) {
-            sum += grid.GetVerticalReflectionLines();
-            sum += 100*grid.GetHorizontalReflectionLlines();
+            sum += grid.GetNumber();
         }
-        Console.WriteLine($"Done! Sum: {sum}");
+        Console.WriteLine($"Done! Sum: {sum}");                
     }
 
     public class Grid {
 
+        private static int GridNr = 0;
+
         private readonly List<string> grid;
         private readonly List<string> grid_transpose;
+        private readonly int gridNr;
 
         public Grid(List<string> grid) {
+
+            gridNr = GridNr;
+            GridNr++;
+
             this.grid = grid;
             grid_transpose = new List<string>();
 
@@ -45,16 +51,36 @@ public class Solution_13_2_23 : ISolution
             }
         }
 
-        public int GetHorizontalReflectionLlines() {
-            var oldNum = GetReflectionNumberForAGrid(grid);
-            return GetReflectionNumber(grid, oldNum);
-        }
+        public int GetNumber() {
 
-        public int GetVerticalReflectionLines() {
-            var oldNum = GetReflectionNumberForAGrid(grid_transpose);
-            return GetReflectionNumber(grid_transpose, oldNum);
+            var oldNumHorizontal = GetReflectionNumberForAGrid(grid, 0);
+            var oldNumVertical   = GetReflectionNumberForAGrid(grid_transpose, 0);
+            
+            if (oldNumHorizontal != 0) {                                    
+                var newHorizontal = GetReflectionNumber(grid, oldNumHorizontal);
+                if (newHorizontal != 0) {                    
+                    return 100*newHorizontal;
+                } else {                   
+                    var newVertical = GetReflectionNumber(grid_transpose, 0);
+                    if (newVertical != 0) {                        
+                        return newVertical;
+                    }
+                }                
+            }
+            if (oldNumVertical != 0) {                            
+                var newVertical = GetReflectionNumber(grid_transpose, oldNumVertical);
+                if (newVertical != 0) {
+                    return newVertical;
+                } else {                    
+                    var newHorizontal = GetReflectionNumber(grid, 0);
+                    if (newHorizontal != 0) {
+                        return 100*newHorizontal;
+                    }
+                }
+            }            
+            return 0;
         }
-
+       
         private static int GetReflectionNumber(List<string> grid, int oldNum) {
 
             for (int yChange=0; yChange<grid.Count; yChange++) {
@@ -65,23 +91,30 @@ public class Solution_13_2_23 : ISolution
                     else 
                         grid[yChange] = grid[yChange].Remove(xChange, 1).Insert(xChange, "#");
 
-                    var result = GetReflectionNumberForAGrid(grid);
+                    var result = GetReflectionNumberForAGrid(grid, oldNum);
 
                     if (grid[yChange][xChange] == '#')
                         grid[yChange] = grid[yChange].Remove(xChange, 1).Insert(xChange, ".");
                     else 
                         grid[yChange] = grid[yChange].Remove(xChange, 1).Insert(xChange, "#");
 
-                    if (result != 0 && result != oldNum)
+                    if (result != 0 && result != oldNum) {                                        
                         return result;
+                    }                        
                 }
             }
 
             return 0;
         }
 
-        private static int GetReflectionNumberForAGrid(List<string> grid) {
+        private static int GetReflectionNumberForAGrid(List<string> grid, int oldNr) {
+
+            oldNr--;
+
             for (int i=0; i<grid.Count-1; i++) {
+
+                if (i==oldNr)
+                    continue;
 
                 var foundReflection = true;
 
