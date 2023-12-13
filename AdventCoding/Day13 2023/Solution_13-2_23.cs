@@ -91,9 +91,7 @@ public class Solution_13_2_23 : ISolution
                         break;
                     }
 
-                    var testindex1 = i-j;
-                    var testindex2 = i+j+1;
-                    if (grid[testindex1] != grid[testindex2])
+                    if (grid[i-j] != grid[i+j+1])
                     {
                         foundReflection = false;
                         break;

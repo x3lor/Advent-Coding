@@ -63,10 +63,8 @@ public class Solution_13_1_23 : ISolution
                     if (i+j+1 >= grid.Count) {
                         break;
                     }
-
-                    var testindex1 = i-j;
-                    var testindex2 = i+j+1;
-                    if (grid[testindex1] != grid[testindex2])
+                 
+                    if (grid[i-j] != grid[i+j+1])
                     {
                         foundReflection = false;
                         break;
