@@ -46,12 +46,12 @@ public class Solution_13_2_23 : ISolution
         }
 
         public int GetHorizontalReflectionLlines() {
-            var oldNum = InternalTest(grid);
+            var oldNum = GetReflectionNumberForAGrid(grid);
             return GetReflectionNumber(grid, oldNum);
         }
 
         public int GetVerticalReflectionLines() {
-            var oldNum = InternalTest(grid_transpose);
+            var oldNum = GetReflectionNumberForAGrid(grid_transpose);
             return GetReflectionNumber(grid_transpose, oldNum);
         }
 
@@ -65,7 +65,7 @@ public class Solution_13_2_23 : ISolution
                     else 
                         grid[yChange] = grid[yChange].Remove(xChange, 1).Insert(xChange, "#");
 
-                    var result = InternalTest(grid);
+                    var result = GetReflectionNumberForAGrid(grid);
 
                     if (grid[yChange][xChange] == '#')
                         grid[yChange] = grid[yChange].Remove(xChange, 1).Insert(xChange, ".");
@@ -80,7 +80,7 @@ public class Solution_13_2_23 : ISolution
             return 0;
         }
 
-        private static int InternalTest(List<string> grid) {
+        private static int GetReflectionNumberForAGrid(List<string> grid) {
             for (int i=0; i<grid.Count-1; i++) {
 
                 var foundReflection = true;
