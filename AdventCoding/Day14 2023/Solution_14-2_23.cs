@@ -9,7 +9,10 @@ public class Solution_14_2_23 : ISolution
         var counter = -1;
         var numbersList = new List<int>();
 
-        while (counter < 10000) {
+        var cycleDetected = false;
+        var cycleStart=0;
+
+        while (!cycleDetected) {
 
             counter++;
 
@@ -20,43 +23,42 @@ public class Solution_14_2_23 : ISolution
 
             var gridNr = GetGridNr(grid);
             numbersList.Add(gridNr);
+
+            if (counter == 500) {
+                cycleStart = numbersList.Count-1;
+            }
+
+            if (counter > 500) {
+                if (numbersList[cycleStart] == numbersList.Last()) {
+                    var cycleTry = CycleDetection(numbersList, cycleStart);
+
+                    if (cycleTry != -1) {
+                        cycleDetected = true;
+                        var target2 = 1000000000;
+                        var result2 = numbersList[(target2-cycleStart)%cycleTry+cycleStart-1];
+                        Console.WriteLine(result2);
+                    }
+                }
+            }
         }
-
-        
-        numbersList.RemoveRange(0, 5000);
-
-        var num = numbersList[0];
-
-        var indexOfNext = 1;
-        while (numbersList[indexOfNext] != num)
-            indexOfNext++;
-
-        while (!Iscycle(numbersList, 0, indexOfNext)) {
-
-            indexOfNext++;
-            while (numbersList[indexOfNext] != num)
-                indexOfNext++;
-        }
-
-        var cycleLenth = indexOfNext;
-        var cycleStart = 0;
-
-        var target = 1000000000-5000;
-        target = target % cycleLenth;
-
-        var result = numbersList[cycleStart+target-1];
-
-        Console.WriteLine(result);
     }
 
-    
+    private static int CycleDetection(List<int> numbersList, int start) {
+        var doubleCycleLength = numbersList.Count-start;
 
-    private static bool Iscycle(List<int> numberlist, int index, int cycleLenth) {
+        if (numbersList[start+(doubleCycleLength/2)] == numbersList[start]) {
+            return Iscycle(numbersList, start, doubleCycleLength/2);
+        } else {
+            return -1;
+        }
+    }
+
+    private static int Iscycle(List<int> numberlist, int index, int cycleLenth) {
         for (int i=0; i<cycleLenth; i++) {
             if (numberlist[index+i] != numberlist[index+i+cycleLenth])
-                return false;
+                return -1;
         }
-        return true;
+        return cycleLenth;
     }
 
     private static int GetGridNr(List<string> grid) {
