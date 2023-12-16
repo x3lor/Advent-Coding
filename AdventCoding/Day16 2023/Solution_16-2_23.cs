@@ -56,28 +56,19 @@ public class Solution_16_2_23 : ISolution
 
             while (true) {
 
-                // if out of grid -> continue
-                if (x < 0 || x >= grid[0].Length || y < 0 || y >= grid.Length)
+                // if (out of grid || loop detection)
+                if (x < 0 || x >= grid[0].Length || y < 0 || y >= grid.Length || 
+                    (grid[y][x] == '-' && loopDetection.Any(l => l.X == x && l.Y==y) && (direction == Direction.Top || direction == Direction.Bottom)) ||
+                    (grid[y][x] == '|' && loopDetection.Any(l => l.X == x && l.Y==y) && (direction == Direction.Left || direction == Direction.Right)))
                     break;
 
+                // mark on shaddow-grid
                 shaddow[y] = shaddow[y].Remove(x, 1).Insert(x, "#");
-
-                // if out of grid -> continue
-                if (x < 0 || x >= grid[0].Length || y < 0 || y >= grid.Length)
-                    break;
-
-                if (grid[y][x] == '-' && loopDetection.Any(l => l.X == x && l.Y==y) && (direction == Direction.Top || direction == Direction.Bottom)) {
-                    break;            
-                }
-
-                if (grid[y][x] == '|' && loopDetection.Any(l => l.X == x && l.Y==y) && (direction == Direction.Left || direction == Direction.Right)) {
-                    break;            
-                }
 
                 // handle current position
                 switch (grid[y][x]) {
                     case '.': { 
-                        break; 
+                        break; // just move on
                     }
                     case '\\': {
                         switch (direction) {
@@ -90,10 +81,10 @@ public class Solution_16_2_23 : ISolution
                     }
                     case '/': {
                         switch (direction) {
-                            case Direction.Top:    direction = Direction.Right;   break;
-                            case Direction.Bottom: direction = Direction.Left;  break;
-                            case Direction.Left:   direction = Direction.Bottom;    break;
-                            case Direction.Right:  direction = Direction.Top; break;
+                            case Direction.Top:    direction = Direction.Right;  break;
+                            case Direction.Bottom: direction = Direction.Left;   break;
+                            case Direction.Left:   direction = Direction.Bottom; break;
+                            case Direction.Right:  direction = Direction.Top;    break;
                         }
                         break;
                     }
@@ -111,17 +102,18 @@ public class Solution_16_2_23 : ISolution
                                 stack.Push(new PositionAndDirection(x, y, Direction.Right));
                                 loopDetection.Add(new PositionAndDirection(x, y, Direction.Left));
                                 loopDetection.Add(new PositionAndDirection(x, y, Direction.Right));
-                                break;}
-                            case Direction.Left:   break;
-                            case Direction.Right:  break;
+                                break;
+                            }
+                            case Direction.Left:  break; // just move on
+                            case Direction.Right: break; // just move on
                         }
                         break;
                     }
 
                     case '|': {
                         switch (direction) {
-                            case Direction.Top:    break;
-                            case Direction.Bottom: break;
+                            case Direction.Top:    break; // just move on
+                            case Direction.Bottom: break; // just move on
                             case Direction.Left:   {
                                 direction = Direction.Top; 
                                 stack.Push(new PositionAndDirection(x, y, Direction.Bottom));
@@ -148,20 +140,11 @@ public class Solution_16_2_23 : ISolution
                     case Direction.Left:   x--; break;
                     case Direction.Right:  x++; break;
                 }
-
-                // if out of grid -> continue
-                if (x < 0 || x >= grid[0].Length || y < 0 || y >= grid.Length)
-                    break;
             }
         }
 
-        var sum = 0;
-
-        foreach(var line in shaddow) {
-            sum += line.Count(c => c == '#');
-        }
-
-        return sum;
+        return shaddow.Select(line => line.Count(c => c == '#'))
+                      .Sum();
     }
 
     public enum Direction {
