@@ -23,7 +23,7 @@ public class Solution_18_2_23 : ISolution
         var currentY = 0;
         var currentX = 0;
         foreach (var instruction in instructions) {
-            points.Add(new Point {X=currentX, Y=currentY});
+            points.Add(new Point(currentX, currentY));
             switch (instruction.Direction) {
                 case Direction.Up:    currentY -= instruction.Distance; break;
                 case Direction.Down:  currentY += instruction.Distance; break;
@@ -31,7 +31,7 @@ public class Solution_18_2_23 : ISolution
                 case Direction.Right: currentX += instruction.Distance; break;
             }
         }
-        points.Add(new Point {X=currentX, Y=currentY});
+        points.Add(new Point(currentX, currentY));
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///                          Create Edges between those points                              ///
@@ -43,7 +43,7 @@ public class Solution_18_2_23 : ISolution
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        ///         Determine for Horzontal Edges where they change "inner-outer" or not            ///
+        ///         Determine for Horzontal Edges wether they change "inner-outer" or not           ///
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
         for(int i=0; i<edges.Count; i++) {
@@ -55,9 +55,6 @@ public class Solution_18_2_23 : ISolution
 
             var nextLeftPoint = points[(i-1+edges.Count)%points.Count];
             var nextRightPoint = points[(i+2)%points.Count];
-
-            if (edge.From.Y == nextLeftPoint.Y || edge.To.Y == nextRightPoint.Y)
-                throw new Exception("should not happen");
 
             var leftGoesUp  = edge.From.Y < nextLeftPoint.Y;
             var rightGoesUp = edge.To.Y   < nextRightPoint.Y;
@@ -73,45 +70,40 @@ public class Solution_18_2_23 : ISolution
         ///                 -> compute once an look for how many lines it's NOT changing            ///
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
+        var overAllSum = new BigInteger(0);
+
         var ymin = points.OrderBy(p => p.Y).First().Y;
         var yMax = points.OrderBy(p => p.Y).Last().Y;
 
-        var overAllSum = new BigInteger(0);
-
         for (long y=ymin; y<=yMax; y++) {
 
-            var edgesOnThisLine = edges.Where(e => (e.From.Y < y && e.To.Y > y) || (e.From.Y > y && e.To.Y < y) || (e.From.Y == y && e.To.Y == y))
-                                       .OrderBy(e => e.From.X)
+            var edgesOnThisLine = edges.Where(e => (e.From.Y <  y && e.To.Y >  y) || 
+                                                   (e.From.Y >  y && e.To.Y <  y) || 
+                                                   (e.From.Y == y && e.To.Y == y))
+                                       .OrderByDescending(e => e.From.X)
                                        .ToList();
 
             var sum = 0L;
-            var blockList = GetBlocks(y,edgesOnThisLine);
-            blockList.Reverse();
-            var blockStack = new Stack<Block>(blockList);
-
+            var blockStack = GetBlocks(edgesOnThisLine);
             while (blockStack.Count > 0) {
-
                 var item = blockStack.Pop();
 
                 if (item.Changer == false) {
                     sum += item.Length;
-                    continue;
+                } else {
+                    var nextItem = blockStack.Pop();                
+                    while (nextItem.Changer == false) {                     
+                        nextItem = blockStack.Pop();
+                    }                    
+                    sum += nextItem.Start+nextItem.Length-item.Start;
                 }
-
-                var nextItem = blockStack.Pop();                
-
-                while (nextItem.Changer == false) {                     
-                    nextItem = blockStack.Pop();
-                }                    
-
-                sum += nextItem.Start+nextItem.Length-item.Start;
             }
 
             if (edgesOnThisLine.Any(e => e.Horizontal)) {            
                 overAllSum += sum;
             } else {
-                var yWhereNextPointIs = points.OrderBy(p => p.Y).Where(p => p.Y >= y).First().Y-1;            
-                overAllSum += sum * new BigInteger(yWhereNextPointIs-y+1);
+                var yWhereNextPointIs = points.OrderBy(p => p.Y).Where(p => p.Y >= y).First().Y;            
+                overAllSum += sum * new BigInteger(yWhereNextPointIs-y);
                 y += yWhereNextPointIs-y;
             }                                           
         }
@@ -125,43 +117,42 @@ public class Solution_18_2_23 : ISolution
     }
 
     public class Block {
-        public long Start { get; set; }
-        public long Length { get; set; }
-        public bool Changer { get; set; }
+        public Block(long start, long length, bool changer) {
+            Start = start;
+            Length = length;
+            Changer = changer;
+        }
+
+        public long Start { get; }
+        public long Length { get; }
+        public bool Changer { get; }
     }
 
-    public List<Block> GetBlocks(long line, List<Edge> edges) {
+    public static Stack<Block> GetBlocks(List<Edge> edges) {
         
-        var resultList = new List<Block>();
-
+        var resultList = new Stack<Block>();
         foreach(var edge in edges) {
 
             if (edge.Horizontal) {
-                resultList.Add(new Block() {
-                    Start = Math.Min(edge.From.X, edge.To.X),
-                    Length = Math.Abs(edge.From.X - edge.To.X)+1,
-                    Changer = edge.ChangingInnerOuter
-                });
+                resultList.Push(new Block(Math.Min(edge.From.X, edge.To.X),
+                                         Math.Abs(edge.From.X - edge.To.X)+1,
+                                         edge.ChangingInnerOuter));
             } else {
-                resultList.Add(new Block() {
-                    Start = edge.From.X,
-                    Length = 1,
-                    Changer = true
-                });
+                resultList.Push(new Block(edge.From.X, 1, true));
             }
         }
-
         return resultList;
     }
 
     public class Point {
-        public long X { get; set; }
-        public long Y { get; set; }
 
-        public override string ToString()
-        {
-            return $"({X}|{Y})";
+        public Point(long x, long y) {
+            X=x;
+            Y=y;
         }
+
+        public long X { get; }
+        public long Y { get; }
     }
 
     public class Edge {
@@ -169,7 +160,6 @@ public class Solution_18_2_23 : ISolution
         public Edge(Point from, Point to) {
             From = from;
             To = to;
-
             Horizontal = from.Y == to.Y;
         }
 
@@ -188,31 +178,19 @@ public class Solution_18_2_23 : ISolution
 
             var colorCode = parts[2][2..^1];
             var hexDistance = colorCode[..^1];
-            Direction = colorCode[^1] switch {
+            Direction = colorCode[^1] switch
+            {
                 '0' => Direction.Right,
                 '1' => Direction.Down,
                 '2' => Direction.Left,
-                _ => Direction.Up
+                '3' => Direction.Up,
+                _ => throw new NotImplementedException()
             };
 
             Distance = Convert.ToInt32(hexDistance, 16);
-
-            // Direction = parts[0] switch {
-            //     "U" => Direction.Up,
-            //     "R" => Direction.Right,
-            //     "L" => Direction.Left,
-            //     _ => Direction.Down
-            // };
-
-            // Distance = int.Parse(parts[1]);
         }
 
         public Direction Direction { get; }
         public int Distance { get; }
-
-        public override string ToString()
-        {
-            return $"[{Direction}|->{Distance}]";
-        }
     }
 }
