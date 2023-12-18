@@ -5,6 +5,7 @@ public class Solution_18_2_23 : ISolution
     public void run()
     {
         Console.WriteLine("Starting...");
+        var startTime = DateTime.Now;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///                                 Read instructions                                       ///
@@ -12,8 +13,7 @@ public class Solution_18_2_23 : ISolution
 
         var instructions = Input_18_23.input
                                       .Split('\n')
-                                      .Select(line => new Instruction(line))
-                                      .ToList();
+                                      .Select(line => new Instruction(line));                                      
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///                            Create all Points in space                                   ///
@@ -107,8 +107,9 @@ public class Solution_18_2_23 : ISolution
                 y += yWhereNextPointIs-y;
             }                                           
         }
-        
-        Console.WriteLine($"Done! Sum: {overAllSum}");
+
+        var endTime = DateTime.Now;
+        Console.WriteLine($"Done (within {(endTime-startTime).TotalMilliseconds})! Sum: {overAllSum}");
     }
 
     
