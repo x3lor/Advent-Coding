@@ -4,7 +4,7 @@ public class Solution_18_1_23 : ISolution
     {
         Console.WriteLine("Starting...");
 
-        var instructions = Input_18_23.input
+        var instructions = Input_18_23.example
                                       .Split('\n')
                                       .Select(line => new Instruction(line))
                                       .ToList();
@@ -40,7 +40,7 @@ public class Solution_18_1_23 : ISolution
 
         SetGridMark(grid, currentX, currentY);
         
-
+        PrintGridToFile(grid);
         
 
         var sum2 = 0;
@@ -83,14 +83,14 @@ public class Solution_18_1_23 : ISolution
     //     }
     // }
 
-    // private static void PrintGridToFile(string[] grid) {
-    //     using var writer = new StreamWriter("debug.txt");
+    private static void PrintGridToFile(string[] grid) {
+        using var writer = new StreamWriter("debug.txt");
 
-    //     foreach (var line in grid)
-    //     {
-    //         writer.WriteLine(line);
-    //     }
-    // }
+        foreach (var line in grid)
+        {
+            writer.WriteLine(line);
+        }
+    }
 
     public void SetGridMark(string[] grid, int x, int y) {
         grid[y] = grid[y].Remove(x, 1).Insert(x, "#");
