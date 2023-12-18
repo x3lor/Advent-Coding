@@ -102,7 +102,10 @@ public class Solution_18_2_23 : ISolution
             if (edgesOnThisLine.Any(e => e.Horizontal)) {            
                 overAllSum += sum;
             } else {
-                var yWhereNextPointIs = points.OrderBy(p => p.Y).Where(p => p.Y >= y).First().Y;            
+                var yWhereNextPointIs = points.Where(p => p.Y > y)
+                                              .OrderBy(p => p.Y)
+                                              .First()
+                                              .Y;            
                 overAllSum += sum * new BigInteger(yWhereNextPointIs-y);
                 y += yWhereNextPointIs-y;
             }                                           
