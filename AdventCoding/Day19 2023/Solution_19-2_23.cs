@@ -1,3 +1,5 @@
+#pragma warning disable CS8618 
+#pragma warning disable CS8625
 using System.Numerics;
 
 public class Solution_19_2_23 : ISolution
@@ -6,30 +8,22 @@ public class Solution_19_2_23 : ISolution
     {
         Console.WriteLine("Starting...");
 
-        // min 1, max 4000
-        // {x=1679,m=44,a=2067,s=496}
-        // qqz{s>2770:qs,m<1801:hdj,R}
+        var collectionRuleSets = Input_19_23.inputFlow
+                                            .Split('\n')
+                                            .Select(line => new RuleSet(line))
+                                            .ToList();
+        var rulesDict = collectionRuleSets.ToDictionary(r => r.Name, r => r);
+        foreach(var ruleSet in collectionRuleSets) {
+            ruleSet.AddRulesToRuleSets(rulesDict);
+        }
 
-        var rules = Input_19_23.exampleFlow
-                               .Split('\n')
-                               .Select(line => new RuleSet(line))
-                               .ToList();
-
-        var rulesDict = rules.ToDictionary(r => r.Name, r => r);
-
-        var start = rulesDict["in"];
-
-#pragma warning disable CS8625 
+        var start = rulesDict["in"]; 
         var topNode = new RuleGraph(null, start, rulesDict);
-#pragma warning restore CS8625 
-
         var acceptLeafs = topNode.GetAllAcceptLeafs().ToList();
         using var writer = new StreamWriter("debug.txt");
         var resultList = acceptLeafs.Select(al => new PartCalculator(al))
                                     .Select(pc => pc.GetPossiblePartCount(writer))
                                     .ToList();
-
-        
 
         var endResult = new BigInteger(0);
 
@@ -149,13 +143,13 @@ public class Solution_19_2_23 : ISolution
             
             // go the graph up and gather information
             while (currentNode.MasterNode != null) {
-                var targetBefore = currentNode.Name;
+                var targetBefore = currentNode;
                 currentNode = currentNode.MasterNode;
 
                 // find condtion that leads to currentNode
                 var ruleSet = currentNode.RuleSet;
                 foreach (var rule in ruleSet.Rules) {
-                    if (rule.TargetRuleSet == targetBefore) {
+                    if (rule.TargetRuleSet == targetBefore.RuleSet) {
                         conditionSet.AddPassingCondition(rule);
                         break;
                     } else {
@@ -169,20 +163,44 @@ public class Solution_19_2_23 : ISolution
         }
     }
 
+
+
     private class RuleSet {
 
-        public List<Rule> Rules { get; }
+        private static int Id = 0;
+        private readonly int id = Id++;
 
-        // qqz{s>2770:qs,m<1801:hdj,R}
+        public List<Rule> Rules { get; private set; }
+        public RuleSetType RuleSetType { get; }
+
+        private readonly string init;
+
         public RuleSet(string init) {
+            this.init = init;
             var indexOfBracket = init.IndexOf('{');
             Name = init[..indexOfBracket];
+            RuleSetType = RuleSetType.Collection;
+        }
+
+        public void AddRulesToRuleSets(Dictionary<string, RuleSet> allCollectionRuleSets) {
+            var indexOfBracket = init.IndexOf('{');
             Rules = init[(indexOfBracket+1)..^1].Split(',')
-                                                .Select(s => new Rule(s))
+                                                .Select(s => new Rule(s, allCollectionRuleSets))
                                                 .ToList();
         }
 
+        public RuleSet(bool accept) {
+            if (accept)
+                RuleSetType = RuleSetType.Accept;
+            else
+                RuleSetType = RuleSetType.Reject;
+
+            Rules = null;
+        }
+ 
+
         public string Name { get; }
+
     }
 
     private class RuleGraph {
@@ -197,24 +215,24 @@ public class Solution_19_2_23 : ISolution
             foreach(var rule in ruleSet.Rules) {
                 switch (rule.Type) {
                     case RuleType.Accept: {
-                        subNodes.Add(new RuleGraph(this, true));
+                        subNodes.Add(new RuleGraph(this, rule.TargetRuleSet, true));
                         break;
                     }
                     case RuleType.Reject: {
-                        subNodes.Add(new RuleGraph(this, false));
+                        subNodes.Add(new RuleGraph(this, rule.TargetRuleSet, false));
                         break;
                     }
                     case RuleType.Jump: {
-                        subNodes.Add(new RuleGraph(this, allRuleSets[rule.TargetRuleSet], allRuleSets));
+                        subNodes.Add(new RuleGraph(this, rule.TargetRuleSet, allRuleSets));
                         break;
                     }
                     case RuleType.Condition: {
-                        if (rule.TargetRuleSet == "A") {
-                            subNodes.Add(new RuleGraph(this, true));
-                        } else if (rule.TargetRuleSet == "R") {
-                            subNodes.Add(new RuleGraph(this, false));
+                        if (rule.TargetRuleSet.RuleSetType == RuleSetType.Accept) {
+                            subNodes.Add(new RuleGraph(this, rule.TargetRuleSet, true));
+                        } else if (rule.TargetRuleSet.RuleSetType == RuleSetType.Reject) {
+                            subNodes.Add(new RuleGraph(this, rule.TargetRuleSet, false));
                         } else {
-                            subNodes.Add(new RuleGraph(this, allRuleSets[rule.TargetRuleSet], allRuleSets));
+                            subNodes.Add(new RuleGraph(this,rule.TargetRuleSet, allRuleSets));
                         }
                         break;
                     }
@@ -226,18 +244,14 @@ public class Solution_19_2_23 : ISolution
             RuleSet = ruleSet;
         }
 
-#pragma warning disable CS8618 
-        public RuleGraph(RuleGraph masterNode, bool accept) {
+        private RuleGraph(RuleGraph masterNode, RuleSet ruleSet, bool accept) {
             IsLeaf = true;
             Accept = accept;
             SubNodes = new List<RuleGraph>();
             Name = accept ? "A" : "R";
             MasterNode = masterNode;
-#pragma warning disable CS8625 
-            RuleSet = null;
-#pragma warning restore CS8625 
+            RuleSet = ruleSet;
         }
-#pragma warning restore CS8618 
 
         public bool IsLeaf { get; }
         public bool Accept { get; }
@@ -262,20 +276,19 @@ public class Solution_19_2_23 : ISolution
         }
     }
 
-    private enum RuleType { Condition, Accept, Reject, Jump }
-    private enum Operator { Greater, Less}
+    private enum RuleType    { Condition, Accept, Reject, Jump }
+    private enum RuleSetType { Collection, Accept, Reject }
+    private enum Operator    { Greater, Less}
 
-    private class Rule {
-        // s>2770:qs
-        #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public Rule(string init) {
+    private class Rule {     
+        public Rule(string init, Dictionary<string, RuleSet> allCollectionRuleSets) {
 
             if (init == "A") {
                 Type = RuleType.Accept;
-                TargetRuleSet = init;
+                TargetRuleSet = new RuleSet(true);
             } else if (init == "R") {
                 Type = RuleType.Reject;
-                TargetRuleSet = init;
+                TargetRuleSet = new RuleSet(false);
             } else if (init.Contains('<') || init.Contains('>')) {
                 Type = RuleType.Condition;
 
@@ -295,19 +308,25 @@ public class Solution_19_2_23 : ISolution
 
                 var indexOfColon = init.IndexOf(':');
                 Number = int.Parse(init[2..indexOfColon]);
-                TargetRuleSet = init[(indexOfColon+1)..];
+                var targetRuleSetName = init[(indexOfColon+1)..];
+
+                if (targetRuleSetName == "A")
+                    TargetRuleSet = new RuleSet(true);
+                else if (targetRuleSetName == "R") {
+                    TargetRuleSet = new RuleSet(false);
+                } else {
+                    TargetRuleSet = allCollectionRuleSets[targetRuleSetName];
+                }                
             } else {
                 Type = RuleType.Jump;
-                TargetRuleSet = init;
+                TargetRuleSet = allCollectionRuleSets[init];
             }
         }
-        #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
+        
         public RuleType Type { get; }
         public Operator Op { get; }
         public Variable Var { get; }
         public int Number { get; }
-        public string TargetRuleSet { get; }
+        public RuleSet TargetRuleSet { get; }
     }
-    
 }
