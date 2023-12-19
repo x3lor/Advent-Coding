@@ -114,7 +114,6 @@ public class Solution_18_2_23 : ISolution
         var endTime = DateTime.Now;
         Console.WriteLine($"Done (within {(endTime-startTime).TotalMilliseconds})! Sum: {overAllSum}");
     }
-
     
     public enum Direction {
         Up, Down, Right, Left
