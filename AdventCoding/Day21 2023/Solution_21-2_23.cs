@@ -79,7 +79,8 @@ public class Solution_21_2_23 : ISolution
 
         var half = (strechFactor/2);
 
-        var sumFull          = GetSteppingPoints(grid, half,1);       
+        var sumFullG         = GetSteppingPoints(grid, half,1);       
+        var sumFullK         = GetSteppingPoints(grid, half,2);       
         var sumLeftTop       = GetSteppingPoints(grid, half+1,strechFactor-1);        
         var sumLeftBottom    = GetSteppingPoints(grid, half+1,0);
         var sumRightTop      = GetSteppingPoints(grid, half-1,strechFactor-1);
@@ -94,11 +95,26 @@ public class Solution_21_2_23 : ISolution
         var sum34bottomRight = GetSteppingPoints(grid, half-1,1);
         var sumMiddle        = GetSteppingPoints(grid, half,half);
 
+        // Console.WriteLine(GetSteppingPoints(grid, 3,1));
+        // Console.WriteLine(GetSteppingPoints(grid, 2,2));
+        // Console.WriteLine(GetSteppingPoints(grid, 2,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 2,4));
+        // Console.WriteLine(GetSteppingPoints(grid, 1,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 2,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 3,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 4,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 5,3));
+        // Console.WriteLine(GetSteppingPoints(grid, 2,4));
+        // Console.WriteLine(GetSteppingPoints(grid, 3,4));
+        // Console.WriteLine(GetSteppingPoints(grid, 4,4));
+        // Console.WriteLine(GetSteppingPoints(grid, 3,5));
 
-        //var factor = (26501365L-65)/131;
-        var factor = (steps-65)/131;
+
+        var factor = (26501365L-65)/131;
+       // var factor = (steps-65)/131;
         
-        var result = ((factor-1)*factor/2L)*4*sumFull+
+        var result = factor*factor*sumFullG+
+                     (factor-1)*(factor-1)*sumFullK+
                      (factor-1)*sum34bottomLeft+
                      (factor-1)*sum34bottomRight+
                      (factor-1)*sum34topLeft+
@@ -107,8 +123,7 @@ public class Solution_21_2_23 : ISolution
                      factor*sumLeftTop+
                      factor*sumLeftBottom+
                      factor*sumRightTop+
-                     factor*sumRightBottom+
-                     sumMiddle;
+                     factor*sumRightBottom;
 
         Console.WriteLine($"Done! result: {result}");
 
