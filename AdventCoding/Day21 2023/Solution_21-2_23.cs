@@ -18,18 +18,18 @@ public class Solution_21_2_23 : ISolution
         for (int y=0; y<gridHeight; y++) {
             var indexOfS = oldgrid[y].IndexOf('S');
             if (indexOfS != -1) {
-                start = new Point(indexOfS+20*gridWidth, y+20*gridHeight);
+                start = new Point(indexOfS+gridWidth, y+gridHeight);
                 break;
             }
         }
 
         for (int y=0; y<gridHeight; y++) {
-            oldgrid[y] = string.Concat(Enumerable.Repeat(oldgrid[y], 41));
+            oldgrid[y] = oldgrid[y] + oldgrid[y] + oldgrid[y];
         }
 
-        var grid = new string[gridHeight*41];
+        var grid = new string[gridHeight*3];
         for (int y=0; y<gridHeight; y++) {
-            for (int sub=0; sub<41; sub++) {
+            for (int sub=0; sub<3; sub++) {
                 grid[y+sub*gridHeight] = oldgrid[y];
             }
         }
@@ -40,13 +40,13 @@ public class Solution_21_2_23 : ISolution
         var currentSet = new HashSet<Point> { start };
         var nextSet = new HashSet<Point>();
 
-        const int steps = 55*11;
+        const int steps = 65+131;
         
         for (int i=0; i<steps; i++) {
             foreach (var point in currentSet) {
 
                 var left = new Point(point.X-1, point.Y);
-                if (left.X > 0 && IsFreeSpace(grid, left)) {
+                if (left.X >= 0 && IsFreeSpace(grid, left)) {
                     nextSet.Add(left);
                 }
 
@@ -56,7 +56,7 @@ public class Solution_21_2_23 : ISolution
                 }
 
                 var up = new Point(point.X, point.Y-1);
-                if (up.X > 0 && IsFreeSpace(grid, up)) {
+                if (up.X >= 0 && IsFreeSpace(grid, up)) {
                     nextSet.Add(up);
                 }
 
