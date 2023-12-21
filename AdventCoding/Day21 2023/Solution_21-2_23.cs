@@ -18,18 +18,18 @@ public class Solution_21_2_23 : ISolution
         for (int y=0; y<gridHeight; y++) {
             var indexOfS = oldgrid[y].IndexOf('S');
             if (indexOfS != -1) {
-                start = new Point(indexOfS+gridWidth, y+gridHeight);
+                start = new Point(indexOfS+gridWidth*2, y+gridHeight*2);
                 break;
             }
         }
 
         for (int y=0; y<gridHeight; y++) {
-            oldgrid[y] = oldgrid[y] + oldgrid[y] + oldgrid[y];
+            oldgrid[y] = oldgrid[y] + oldgrid[y] + oldgrid[y] + oldgrid[y] + oldgrid[y];
         }
 
-        var grid = new string[gridHeight*3];
+        var grid = new string[gridHeight*5];
         for (int y=0; y<gridHeight; y++) {
-            for (int sub=0; sub<3; sub++) {
+            for (int sub=0; sub<5; sub++) {
                 grid[y+sub*gridHeight] = oldgrid[y];
             }
         }
@@ -40,7 +40,7 @@ public class Solution_21_2_23 : ISolution
         var currentSet = new HashSet<Point> { start };
         var nextSet = new HashSet<Point>();
 
-        const int steps = 65+131;
+        const int steps = 65+131+131;
         
         for (int i=0; i<steps; i++) {
             foreach (var point in currentSet) {
@@ -76,7 +76,65 @@ public class Solution_21_2_23 : ISolution
 
         PrintGrid(grid);
 
-        Console.WriteLine($"Done! fields: {currentSet.Count}");
+        var sumFull          = GetSteppingPoints(grid, 3,2);       
+        var sumLeftTop       = GetSteppingPoints(grid, 3,4);        
+        var sumLeftBottom    = GetSteppingPoints(grid, 3,0);
+        var sumRightTop      = GetSteppingPoints(grid, 1,4);
+        var sumRightBottom   = GetSteppingPoints(grid, 1,0);
+        var sumCornerTop     = GetSteppingPoints(grid, 2,0);
+        var sumCornerRight   = GetSteppingPoints(grid, 4,2);
+        var sumCornerBottom  = GetSteppingPoints(grid, 2,4);
+        var sumCornerLeft    = GetSteppingPoints(grid, 0,2);
+        var sum34topLeft     = GetSteppingPoints(grid, 3,3);
+        var sum34topRight    = GetSteppingPoints(grid, 1,3);
+        var sum34bottomLeft  = GetSteppingPoints(grid, 3,1);
+        var sum34bottomRight = GetSteppingPoints(grid, 1,1);
+        var sumMiddle        = GetSteppingPoints(grid, 2,2);
+
+        
+        //var factor = (26501365L-65)/131;
+        var factor = (65+131+131L-65)/131;
+        
+        var result = ((factor-1)*factor/2L)*4*sumFull+
+                     (factor-1)*sum34bottomLeft+
+                     (factor-1)*sum34bottomRight+
+                     (factor-1)*sum34topLeft+
+                     (factor-1)*sum34topRight+
+                     sumCornerBottom+sumCornerLeft+sumCornerRight+sumCornerTop+
+                     factor*sumLeftTop+
+                     factor*sumLeftBottom+
+                     factor*sumRightTop+
+                     factor*sumRightBottom+
+                     sumMiddle;
+
+        Console.WriteLine($"Done! result: {result}");
+
+        var alternateSum=0;
+        for (int y=0; y<gridHeight; y++) {
+            for (int x=0; x<gridWidth; x++) {
+                if (IsSteppingPoint(grid, new Point(x, y)))
+                    alternateSum++;
+            }
+        }
+
+        Console.WriteLine("Alternate sum: " + alternateSum);
+    }
+
+    private static long GetSteppingPoints(string[] grid, int factorX, int factorY) {
+        var origin = new Point(131*factorX, 131*factorY);
+        var sum = 0;
+        for (int y=0; y<131; y++) {
+            for (int x=0; x<131; x++) {
+                var current = new Point(x+origin.X,y+origin.Y);
+                if (IsSteppingPoint(grid, current))
+                    sum++;
+            }
+        }
+        return sum;
+    } 
+
+    private static bool IsSteppingPoint(string[] grid, Point p) {
+         return grid[p.Y][p.X] == 'O';
     }
 
     private static bool IsFreeSpace(string[] grid, Point p) {
