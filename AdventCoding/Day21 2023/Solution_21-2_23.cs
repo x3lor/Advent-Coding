@@ -9,6 +9,7 @@ public class Solution_21_2_23 : ISolution
         Console.WriteLine("Starting...");
 
         var start = new Point(-1,-1);
+        const int strechFactor = 7;
 
         var oldgrid = Input_21_23.input.Split('\n');
 
@@ -18,18 +19,18 @@ public class Solution_21_2_23 : ISolution
         for (int y=0; y<gridHeight; y++) {
             var indexOfS = oldgrid[y].IndexOf('S');
             if (indexOfS != -1) {
-                start = new Point(indexOfS+gridWidth*2, y+gridHeight*2);
+                start = new Point(indexOfS+gridWidth*(strechFactor/2), y+gridHeight*(strechFactor/2));
                 break;
             }
         }
 
         for (int y=0; y<gridHeight; y++) {
-            oldgrid[y] = oldgrid[y] + oldgrid[y] + oldgrid[y] + oldgrid[y] + oldgrid[y];
+            oldgrid[y] = string.Concat(Enumerable.Repeat(oldgrid[y], strechFactor));;
         }
 
-        var grid = new string[gridHeight*5];
+        var grid = new string[gridHeight*strechFactor];
         for (int y=0; y<gridHeight; y++) {
-            for (int sub=0; sub<5; sub++) {
+            for (int sub=0; sub<strechFactor; sub++) {
                 grid[y+sub*gridHeight] = oldgrid[y];
             }
         }
@@ -40,7 +41,7 @@ public class Solution_21_2_23 : ISolution
         var currentSet = new HashSet<Point> { start };
         var nextSet = new HashSet<Point>();
 
-        const int steps = 65+131+131;
+        const int steps = 65+(131*(strechFactor/2));
         
         for (int i=0; i<steps; i++) {
             foreach (var point in currentSet) {
@@ -76,24 +77,26 @@ public class Solution_21_2_23 : ISolution
 
         PrintGrid(grid);
 
-        var sumFull          = GetSteppingPoints(grid, 3,2);       
-        var sumLeftTop       = GetSteppingPoints(grid, 3,4);        
-        var sumLeftBottom    = GetSteppingPoints(grid, 3,0);
-        var sumRightTop      = GetSteppingPoints(grid, 1,4);
-        var sumRightBottom   = GetSteppingPoints(grid, 1,0);
-        var sumCornerTop     = GetSteppingPoints(grid, 2,0);
-        var sumCornerRight   = GetSteppingPoints(grid, 4,2);
-        var sumCornerBottom  = GetSteppingPoints(grid, 2,4);
-        var sumCornerLeft    = GetSteppingPoints(grid, 0,2);
-        var sum34topLeft     = GetSteppingPoints(grid, 3,3);
-        var sum34topRight    = GetSteppingPoints(grid, 1,3);
-        var sum34bottomLeft  = GetSteppingPoints(grid, 3,1);
-        var sum34bottomRight = GetSteppingPoints(grid, 1,1);
-        var sumMiddle        = GetSteppingPoints(grid, 2,2);
+        var half = (strechFactor/2);
 
-        
+        var sumFull          = GetSteppingPoints(grid, half,1);       
+        var sumLeftTop       = GetSteppingPoints(grid, half+1,strechFactor-1);        
+        var sumLeftBottom    = GetSteppingPoints(grid, half+1,0);
+        var sumRightTop      = GetSteppingPoints(grid, half-1,strechFactor-1);
+        var sumRightBottom   = GetSteppingPoints(grid, half-1,0);
+        var sumCornerTop     = GetSteppingPoints(grid, half,0);
+        var sumCornerRight   = GetSteppingPoints(grid, strechFactor-1,half);
+        var sumCornerBottom  = GetSteppingPoints(grid, half,strechFactor-1);
+        var sumCornerLeft    = GetSteppingPoints(grid, 0,half);
+        var sum34topLeft     = GetSteppingPoints(grid, half+1,strechFactor-2);
+        var sum34topRight    = GetSteppingPoints(grid, 1,half+1);
+        var sum34bottomLeft  = GetSteppingPoints(grid, half+1,1);
+        var sum34bottomRight = GetSteppingPoints(grid, half-1,1);
+        var sumMiddle        = GetSteppingPoints(grid, half,half);
+
+
         //var factor = (26501365L-65)/131;
-        var factor = (65+131+131L-65)/131;
+        var factor = (steps-65)/131;
         
         var result = ((factor-1)*factor/2L)*4*sumFull+
                      (factor-1)*sum34bottomLeft+
