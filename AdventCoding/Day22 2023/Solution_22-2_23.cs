@@ -19,7 +19,7 @@ public class Solution_22_2_23 : ISolution
         var cubesDict = cubes.ToDictionary(c => c.ID, c=>c);
         
         foreach(var cube in cubes) {
-            MoveCubeDownAsMuchAsPossible(cube, cubes);
+            cube.MoveDownAsMuchAsPossible(cubes);
         }
 
         var listOfBricksForExamination = new List<Cube>();
@@ -40,16 +40,7 @@ public class Solution_22_2_23 : ISolution
         Console.WriteLine($"Done! sum: {finalSum}");
     }
 
-    private static void MoveCubeDownAsMuchAsPossible(Cube c, List<Cube> allCubes) {
-        
-        while (c.Origin.Z > 0 && !c.Intersect(allCubes)) {            
-            c.Origin.Z--;
-        }
-
-        c.Origin.Z++;
-    }
-
-    // 2,7,26~2,7,26
+    
     public class Cube {
         public Cube (string init, int id) {
             var parts = init.Split('~');
@@ -85,6 +76,13 @@ public class Solution_22_2_23 : ISolution
             if (DimZ>1) return Enumerable.Range(Origin.Z, DimZ).Select(z => new Coordinate(Origin.X, Origin.Y, z       )).ToList();
 
             return new List<Coordinate> { Origin };
+        }
+
+        public void MoveDownAsMuchAsPossible(List<Cube> allCubes) {
+            while (Origin.Z > 0 && !Intersect(allCubes)) {            
+                Origin.Z--;
+            }
+            Origin.Z++;
         }
 
         public bool Intersect(Cube other) {
@@ -129,10 +127,7 @@ public class Solution_22_2_23 : ISolution
                              .ToList();
 
             foreach(var cube in copy) {
-                while (cube.Origin.Z > 0 && !cube.Intersect(copy)) {            
-                    cube.Origin.Z--;
-                }
-                cube.Origin.Z++;
+                cube.MoveDownAsMuchAsPossible(copy);
             }
 
             var sum = 0;

@@ -1,7 +1,5 @@
 #pragma warning disable CS8602
 
-using System.Drawing;
-
 public class Solution_22_1_23 : ISolution
 {
     public void run()
@@ -15,7 +13,7 @@ public class Solution_22_1_23 : ISolution
                                .ToList();
         
         foreach(var cube in cubes) {
-            MoveCubeDownAsMuchAsPossible(cube, cubes);
+            cube.MoveDownAsMuchAsPossible(cubes);
         }
 
         int sum=0;
@@ -24,24 +22,9 @@ public class Solution_22_1_23 : ISolution
                 sum++;
         }    
 
-
         Console.WriteLine($"Done! sum: {sum}");
     }
 
-    private void MoveCubeDownAsMuchAsPossible(Cube c, List<Cube> allCubes) {
-        
-        while (c.Origin.Z > 0 && !c.Intersect(allCubes)) {            
-            c.Origin.Z--;
-        }
-
-        c.Origin.Z++;
-    }
-
-    public enum Orientation {
-        AlongX, AlongY, AlongZ, SingleCube
-    }
-
-    // 2,7,26~2,7,26
     public class Cube {
         public Cube (string init) {
             var parts = init.Split('~');
@@ -51,18 +34,12 @@ public class Solution_22_1_23 : ISolution
             DimX = extend.X-Origin.X+1;
             DimY = extend.Y-Origin.Y+1;
             DimZ = extend.Z-Origin.Z+1;
-
-            Orientation = Orientation.SingleCube;
-            if (DimX > 1) Orientation = Orientation.AlongX;
-            if (DimY > 1) Orientation = Orientation.AlongY;
-            if (DimZ > 1) Orientation = Orientation.AlongZ;
         }
 
         public Coordinate Origin { get; }
         public int DimX { get; }
         public int DimY { get; }
         public int DimZ { get; }
-        public Orientation Orientation { get; }
 
         public List<Coordinate> GetAllCubes() {
 
@@ -73,13 +50,20 @@ public class Solution_22_1_23 : ISolution
             return new List<Coordinate> { Origin };
         }
 
+        public void MoveDownAsMuchAsPossible(List<Cube> allCubes) {
+            while (Origin.Z > 0 && !Intersect(allCubes)) {            
+                Origin.Z--;
+            }
+            Origin.Z++;
+        }
+
         public bool Intersect(Cube other) {
             if (ReferenceEquals(other, this))
                 return false;
 
-            return GetAllCubes().Intersect(other.GetAllCubes()).Count() > 0;
+            return GetAllCubes().Intersect(other.GetAllCubes()).Any();
         }
-
+    
         public bool Intersect(List<Cube> others) {
             return others.Where(CubesIsInRage).Any(Intersect);
         }
