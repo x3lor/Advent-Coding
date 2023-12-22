@@ -7,16 +7,7 @@ public class Solution_20_1_23 : ISolution
     {
         Console.WriteLine("Starting...");
 
-        /* 
-        @"broadcaster -> a, b, c
-        %a -> b
-        %b -> c
-        %c -> inv
-        &inv -> a";
-        */
-
         var modules = new List<IModule>();
-
         foreach (var line in Input_20_23.input.Split('\n')) {
             var indexofArrow = line.IndexOf('-');
 
