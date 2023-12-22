@@ -1,4 +1,4 @@
-﻿ISolution solution = new Solution_20_1_23();
+﻿ISolution solution = new Solution_20_2_23();
 solution.run();
 
 
