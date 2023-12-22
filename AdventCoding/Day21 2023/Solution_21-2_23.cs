@@ -93,16 +93,18 @@ public class Solution_21_2_23 : ISolution
         var sum34topRight    = GetSteppingPoints(grid, 1,half+1);
         var sum34bottomLeft  = GetSteppingPoints(grid, half+1,1);
         var sum34bottomRight = GetSteppingPoints(grid, half-1,1);
-        
+
         var factor = (26501365L-65)/131;
-        
         var result = factor*factor*sumFullG+
                      (factor-1)*(factor-1)*sumFullK+
                      (factor-1)*sum34bottomLeft+
                      (factor-1)*sum34bottomRight+
                      (factor-1)*sum34topLeft+
                      (factor-1)*sum34topRight+
-                     sumCornerBottom+sumCornerLeft+sumCornerRight+sumCornerTop+
+                     sumCornerBottom+
+                     sumCornerLeft+
+                     sumCornerRight+
+                     sumCornerTop+
                      factor*sumLeftTop+
                      factor*sumLeftBottom+
                      factor*sumRightTop+
@@ -153,5 +155,4 @@ public class Solution_21_2_23 : ISolution
             writer.WriteLine(line);
         }
     }
-
 }
